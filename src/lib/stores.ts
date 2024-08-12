@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 
 export type SearchType = 'web' | 'image';
+
 export type StartingInput = {
 	type: SearchType;
 	gname: string;
@@ -25,6 +26,6 @@ export type RenderedInput = {
 };
 
 export const init = writable(false);
-export const starting = () => writable<StartingInput | null>(null);
-export const ready = () => writable<ReadyInput | null>(null);
-export const rendered = () => writable<RenderedInput | null>(null);
+export const starting = writable<StartingInput | null>(null);
+export const ready = writable<ReadyInput | null>(null);
+export const rendered = writable<RenderedInput | null>(null);

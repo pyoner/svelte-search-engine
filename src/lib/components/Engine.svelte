@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-
 	import { init, createCallbacks } from '$lib/internal/store';
 
 	export let cx: string;
 
-	onMount(() => {
+	const scriptLoad = new Promise((resolve, reject) => {
 		window.__gcse = {
 			parsetags: 'explicit', // Defaults to 'onload'
 			initializationCallback() {
@@ -19,8 +17,14 @@
 
 		const script = document.createElement('script');
 		script.src = 'https://cse.google.com/cse.js?cx=' + cx;
+
+		script.onload = resolve;
+		script.onerror = reject;
+
 		document.head.appendChild(script);
 	});
 </script>
 
-<slot />
+{#await scriptLoad}
+	<slot />
+{/await}

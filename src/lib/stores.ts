@@ -1,17 +1,30 @@
 import { writable } from 'svelte/store';
 
-const imageSearchStarting = writable(false);
-const imageResultsReady = writable(false);
-const imageResultsRendered = writable(false);
-const webSearchStarting = writable(false);
-const webResultsReady = writable(false);
-const webResultsRendered = writable(false);
-
-export {
-	imageSearchStarting,
-	imageResultsReady,
-	imageResultsRendered,
-	webSearchStarting,
-	webResultsReady,
-	webResultsRendered
+export type SearchType = 'web' | 'image';
+export type StartingInput = {
+	type: SearchType;
+	gname: string;
+	query: string;
 };
+
+export type ReadyInput = {
+	type: SearchType;
+	gname: string;
+	query: string;
+	promos: Promotion[];
+	results: Result[];
+	div: HTMLElement;
+};
+
+export type RenderedInput = {
+	type: SearchType;
+	gname: string;
+	query: string;
+	promos: Promotion[];
+	results: Result[];
+};
+
+export const init = writable(false);
+export const starting = () => writable<StartingInput | null>(null);
+export const ready = () => writable<ReadyInput | null>(null);
+export const rendered = () => writable<RenderedInput | null>(null);

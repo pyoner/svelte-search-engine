@@ -100,6 +100,23 @@ type SearchCallback = {
 };
 
 type Config = {
+	/**
+	 * The Initialization Callback
+	 *
+	 * The initialization callback is invoked before the Search Element JavaScript renders search elements in the DOM.
+	 * If parsetags is set to explicit in __gcse, the Search Element JavaScript leaves rendering Search Elements to the initialization callback.
+	 * This might be used to select elements to render, or to defer rendering elements until they are needed.
+	 * It can also override the attributes of the elements; for instance, it can turn a searchbox that is configured through the Control Panel
+	 * or HTML attributes to default to web search into an image search box, or specify that queries submitted via a Programmable Search Engine
+	 * form are executed in a searchresults-only element.
+	 *
+	 * The role of the initialization callback is controlled by the value of the parsetags property of __gcse.
+	 *
+	 * If its value is onload, the Search Element JavaScript renders all Search Elements on the page automatically.
+	 * The initialization callback is still invoked, but it is not responsible for rendering the Search Elements.
+	 * If its value is explicit, the Search Element JavaScript does not render Search Elements.
+	 * The callback may render them selectively using the render() function, or render all Search Elements with the go() function.
+	 */
 	parsetags?: 'explicit' | 'onload';
 	initializationCallback?: () => void;
 	searchCallbacks?: {

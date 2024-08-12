@@ -1,10 +1,10 @@
 <script lang="ts">
+	import '../../global';
 	import { onMount } from 'svelte';
 
 	export let cx: string;
 
 	onMount(() => {
-		window.__gcse = window.__gcse || {};
 		window.__gcse = {
 			parsetags: 'explicit', // Defaults to 'onload'
 			initializationCallback: myInitializationCallback,

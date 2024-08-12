@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import type { Promotion, Result } from '$lib/types';
 
 export type SearchType = 'web' | 'image';
 

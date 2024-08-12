@@ -3,7 +3,7 @@
 
 	export let cx: string;
 
-	const scriptLoad = new Promise((resolve, reject) => {
+	const scriptLoading = new Promise((resolve, reject) => {
 		window.__gcse = {
 			parsetags: 'explicit', // Defaults to 'onload'
 			initializationCallback() {
@@ -25,6 +25,6 @@
 	});
 </script>
 
-{#await scriptLoad}
+{#await scriptLoading}
 	<slot />
 {/await}

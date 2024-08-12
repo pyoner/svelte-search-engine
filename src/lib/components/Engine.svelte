@@ -1,24 +1,19 @@
 <script lang="ts">
-	import '../../global';
 	import { onMount } from 'svelte';
+
+	import { init, createCallbacks } from '$lib/internal/store';
 
 	export let cx: string;
 
 	onMount(() => {
 		window.__gcse = {
 			parsetags: 'explicit', // Defaults to 'onload'
-			initializationCallback: myInitializationCallback,
+			initializationCallback() {
+				init.set(true);
+			},
 			searchCallbacks: {
-				image: {
-					starting: myImageSearchStartingCallback,
-					ready: myImageResultsReadyCallback,
-					rendered: myImageResultsRenderedCallback
-				},
-				web: {
-					starting: myWebSearchStartingCallback,
-					ready: myWebResultsReadyCallback,
-					rendered: myWebResultsRenderedCallback
-				}
+				image: createCallbacks('image'),
+				web: createCallbacks('web')
 			}
 		};
 

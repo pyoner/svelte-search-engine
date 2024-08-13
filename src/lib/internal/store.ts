@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import type { Promotion, Result, SearchCallback } from '$lib/types/search';
-import { key, registry } from './registry';
+import { registry } from './registry';
 
 export type SearchType = 'web' | 'image';
 
@@ -39,7 +39,7 @@ export function createCallbacks(type: SearchType): SearchCallback {
 		},
 		ready(gname, query, promos, results, div) {
 			ready.set({ type, gname, query, promos, results, div });
-			return registry.has(key(type, gname)) ? true : undefined;
+			return registry.has(type, gname) ? true : undefined;
 		},
 		rendered(gname, query, promos, results) {
 			rendered.set({ type, gname, query, promos, results });

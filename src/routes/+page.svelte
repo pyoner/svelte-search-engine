@@ -7,6 +7,33 @@
 </script>
 
 <Engine {cx}>
-	<Search attributes={{ gname: 'web', enableImageSearch: false }}></Search>
-	<Search attributes={{ gname: 'image', enableImageSearch: true, disableWebSearch: true }}></Search>
+	<div class="container">
+		<div>
+			<Search
+				attributes={{
+					gname: 'web',
+					enableImageSearch: false
+				}}
+			></Search>
+		</div>
+		<div>
+			<Search
+				attributes={{
+					gname: 'image',
+					enableImageSearch: true,
+					disableWebSearch: true
+				}}
+			></Search>
+		</div>
+	</div>
 </Engine>
+
+<style>
+	.container {
+		display: flex;
+		flex-direction: row;
+	}
+	.container > div {
+		flex-grow: 1;
+	}
+</style>

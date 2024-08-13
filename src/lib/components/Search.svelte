@@ -5,7 +5,7 @@
 	export let gname: string;
 
 	const gcse: Action = (node) => {
-		api.render({ gname, tag: 'search', div: node });
+		api().then((x) => x.render({ gname, tag: 'search', div: node }));
 	};
 </script>
 

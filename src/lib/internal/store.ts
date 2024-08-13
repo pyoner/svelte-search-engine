@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { Promotion, Result, SearchCallback } from '$lib/types';
+import type { Promotion, Result, SearchCallback } from '$lib/types/search';
 
 export type SearchType = 'web' | 'image';
 

@@ -7,5 +7,6 @@
 </script>
 
 <Engine {cx}>
-	<Search gname="test"></Search>
+	<Search attributes={{ gname: 'web', enableImageSearch: false }}></Search>
+	<Search attributes={{ gname: 'image', enableImageSearch: true, disableWebSearch: true }}></Search>
 </Engine>

@@ -56,6 +56,8 @@ export function subscribeComponent(gname: string, component: typeof CseComponent
 			return;
 		}
 
+		// TODO: add call component.$destroy() method
+		// then the component deleted from the DOM
 		new component({
 			target: input.div,
 			props: {

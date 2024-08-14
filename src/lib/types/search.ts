@@ -93,7 +93,7 @@ export type SearchCallback = {
 	 * @param results - An array of the DOM elements containing results.
 	 *
 	 * Note: Changing the value of gname and query don't alter the behavior of the Search Element JavaScript,
-	 * but changes to the entries in promoElts and resultElts are changes to the DOM.
+	 * but changes to the entries in promos and results are changes to the DOM.
 	 * Note: Only those DOM elements rendered by the Search Element JavaScript itself are passed to the resultsRendered callback.
 	 */
 	rendered?: (gname: string, query: string, promos: HTMLElement[], results: HTMLElement[]) => void;

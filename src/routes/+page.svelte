@@ -3,11 +3,16 @@
 	import Engine from '$lib/components/Engine.svelte';
 	import Results from '$lib/components/Results.svelte';
 	import Search from '$lib/components/Search.svelte';
-	import { rendered } from '$lib/stores';
+	import { rendered, ready } from '$lib/stores';
 
 	const cx = PUBLIC_CSE_CX;
+
+	ready.subscribe((input) => {
+		console.log('ready input', input);
+	});
+
 	rendered.subscribe((input) => {
-		console.log(input);
+		console.log('rendered input', input);
 	});
 </script>
 

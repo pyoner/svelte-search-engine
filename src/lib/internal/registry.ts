@@ -1,4 +1,5 @@
-import type { SearchType } from './store';
+import type { UIComponents } from '$lib/types/components';
+import { searchType, type SearchType } from './store';
 
 class Registry {
 	#registry = new Set<string>();
@@ -19,3 +20,23 @@ class Registry {
 }
 
 export const registry = new Registry();
+
+export function registryComponents(gname: string, components: UIComponents) {
+	searchType.forEach((k) => {
+		const component = components[k];
+		if (component) {
+			registry.add(k, gname);
+		}
+	});
+
+	return () => unRegistryComponents(gname, components);
+}
+
+export function unRegistryComponents(gname: string, components: UIComponents) {
+	searchType.forEach((k) => {
+		const component = components[k];
+		if (component) {
+			registry.delete(k, gname);
+		}
+	});
+}

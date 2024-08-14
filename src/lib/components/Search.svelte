@@ -2,22 +2,30 @@
 	import type { Action } from 'svelte/action';
 	import { api } from '$lib/internal/api';
 	import type { ComponentAttributes } from '$lib/types/google';
-	import type { UIComponents } from '$lib/types/components';
-	import { registry } from '$lib/internal/registry';
-	import type { SearchType } from '$lib/internal/store';
+	import { type UIComponents } from '$lib/types/components';
+	import { registryComponents } from '$lib/internal/registry';
+	import { subscribeComponents } from '$lib/internal/store';
 
 	export let attributes: ComponentAttributes;
 	let { gname } = attributes;
 
 	export let components: UIComponents | undefined = undefined;
 
-	if (components && gname) {
-		Object.keys(components).forEach((k) => {
-			registry.add(k as SearchType, gname);
-		});
-	}
 	const gcse: Action = (node) => {
-		api().then((x) => x.render({ gname, tag: 'search', div: node, attributes }));
+		api().then((x) => {
+			x.render({ gname, tag: 'search', div: node, attributes });
+		});
+
+		if (gname && components) {
+			const unRegistryComponents = registryComponents(gname, components);
+			const unsubscribeComponents = subscribeComponents(gname, components);
+			return {
+				destroy() {
+					unRegistryComponents();
+					unsubscribeComponents();
+				}
+			};
+		}
 	};
 </script>
 

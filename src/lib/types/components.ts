@@ -1,6 +1,7 @@
-import type { SvelteComponent } from 'svelte';
+import { SvelteComponent } from 'svelte';
 
+export class CseComponent extends SvelteComponent {}
 export type UIComponents = {
-	web: SvelteComponent;
-	image: SvelteComponent;
+	web?: typeof CseComponent;
+	image?: typeof CseComponent;
 };

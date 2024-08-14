@@ -1,8 +1,11 @@
-import { writable } from 'svelte/store';
+import { writable, type Unsubscriber } from 'svelte/store';
 import type { Promotion, Result, SearchCallback } from '$lib/types/search';
+import type { CseComponent, UIComponents } from '$lib/types/components';
+
 import { registry } from './registry';
 
-export type SearchType = 'web' | 'image';
+export const searchType = ['web', 'image'] as const;
+export type SearchType = (typeof searchType)[number];
 
 export type StartingInput = {
 	type: SearchType;
@@ -45,4 +48,32 @@ export function createCallbacks(type: SearchType): SearchCallback {
 			rendered.set({ type, gname, query, promos, results });
 		}
 	};
+}
+
+export function subscribeComponent(gname: string, component: typeof CseComponent) {
+	return ready.subscribe((input) => {
+		if (!input) {
+			return;
+		}
+
+		new component({
+			target: input.div,
+			props: {
+				promos: input.promos,
+				results: input.results
+			}
+		});
+	});
+}
+
+export function subscribeComponents(gname: string, components: UIComponents) {
+	const arr = searchType.reduce<Unsubscriber[]>((acc, k) => {
+		const component = components[k];
+		if (component) {
+			acc.push(subscribeComponent(gname, component));
+		}
+		return acc;
+	}, []);
+
+	return () => arr.forEach((unsubscribe) => unsubscribe());
 }

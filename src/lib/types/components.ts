@@ -1,7 +1,20 @@
 import { SvelteComponent } from 'svelte';
+import type { Promotion, Result } from './search';
 
-export class CseComponent extends SvelteComponent {}
+export class PromotionsComponent extends SvelteComponent<{
+	items: Promotion[];
+}> {}
+
+export class ResultsComponent extends SvelteComponent<{
+	items: Result[];
+}> {}
+
+export type CseComponents = {
+	promos?: typeof PromotionsComponent;
+	results?: typeof ResultsComponent;
+};
+
 export type UIComponents = {
-	web?: typeof CseComponent;
-	image?: typeof CseComponent;
+	web?: CseComponents;
+	image?: CseComponents;
 };

@@ -1,6 +1,7 @@
 <script>
 	import { PUBLIC_CSE_CX } from '$env/static/public';
 	import Engine from '$lib/components/Engine.svelte';
+	import Results from '$lib/components/Results.svelte';
 	import Search from '$lib/components/Search.svelte';
 
 	const cx = PUBLIC_CSE_CX;
@@ -14,6 +15,7 @@
 					gname: 'web',
 					enableImageSearch: false
 				}}
+				components={{ web: Results }}
 			></Search>
 		</div>
 		<div>

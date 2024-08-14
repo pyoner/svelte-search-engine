@@ -26,8 +26,8 @@ export type RenderedInput = {
 	type: SearchType;
 	gname: string;
 	query: string;
-	promos: Promotion[];
-	results: Result[];
+	promos: HTMLElement[];
+	results: HTMLElement[];
 };
 
 export const init = writable(false);

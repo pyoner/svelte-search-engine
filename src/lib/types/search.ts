@@ -96,7 +96,7 @@ export type SearchCallback = {
 	 * but changes to the entries in promoElts and resultElts are changes to the DOM.
 	 * Note: Only those DOM elements rendered by the Search Element JavaScript itself are passed to the resultsRendered callback.
 	 */
-	rendered?: (gname: string, query: string, promos: Promotion[], results: Result[]) => void;
+	rendered?: (gname: string, query: string, promos: HTMLElement[], results: HTMLElement[]) => void;
 };
 
 export type Config = {

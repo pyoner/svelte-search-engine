@@ -3,8 +3,12 @@
 	import Engine from '$lib/components/Engine.svelte';
 	import Results from '$lib/components/Results.svelte';
 	import Search from '$lib/components/Search.svelte';
+	import { rendered } from '$lib/stores';
 
 	const cx = PUBLIC_CSE_CX;
+	rendered.subscribe((input) => {
+		console.log(input);
+	});
 </script>
 
 <Engine {cx}>

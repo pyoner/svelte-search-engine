@@ -70,7 +70,7 @@ export type SearchCallback = {
 	ready?: (
 		gname: string,
 		query: string,
-		promos: Promotion[],
+		promos: Promotion[] | undefined,
 		results: Result[],
 		div: HTMLElement
 	) => void | true;

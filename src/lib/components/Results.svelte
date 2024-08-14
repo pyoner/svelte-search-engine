@@ -2,7 +2,7 @@
 	import type { Promotion, Result } from '$lib/types/search';
 	import { onDestroy } from 'svelte';
 
-	export let promos: Promotion[];
+	export let promos: Promotion[] | undefined;
 	export let results: Result[];
 	onDestroy(() => {
 		console.log('component was destroied');

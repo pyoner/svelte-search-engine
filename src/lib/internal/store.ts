@@ -17,7 +17,7 @@ export type ReadyInput = {
 	type: SearchType;
 	gname: string;
 	query: string;
-	promos: Promotion[];
+	promos: Promotion[] | undefined;
 	results: Result[];
 	div: HTMLElement;
 };

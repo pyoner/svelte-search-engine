@@ -3,6 +3,7 @@ import type { Promotion, Result, SearchCallback } from '$lib/types/search';
 import type { CseComponent, UIComponents } from '$lib/types/components';
 
 import { registry } from './registry';
+import { destroyRegistry } from './destroy';
 
 export const searchType = ['web', 'image'] as const;
 export type SearchType = (typeof searchType)[number];
@@ -56,15 +57,14 @@ export function subscribeComponent(gname: string, component: typeof CseComponent
 			return;
 		}
 
-		// TODO: add call component.$destroy() method
-		// then the component deleted from the DOM
-		new component({
+		const c = new component({
 			target: input.div,
 			props: {
 				promos: input.promos,
 				results: input.results
 			}
 		});
+		destroyRegistry.set(input.div, c);
 	});
 }
 

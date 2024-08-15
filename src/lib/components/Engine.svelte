@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { createDestroyObserver } from '$lib/internal/destroy';
 	import { init, createCallbacks } from '$lib/internal/store';
 	import { onMount } from 'svelte';
 
@@ -23,6 +24,14 @@
 			script.onload = resolve;
 			script.onerror = reject;
 			document.head.appendChild(script);
+
+			const destroyObserver = createDestroyObserver();
+			destroyObserver.observe(document.body, {
+				childList: true,
+				subtree: true
+			});
+
+			return () => destroyObserver.disconnect();
 		});
 	});
 </script>

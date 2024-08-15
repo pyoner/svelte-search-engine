@@ -5,7 +5,7 @@
 	export let promos: Promotion[] | undefined;
 	export let results: Result[];
 	onDestroy(() => {
-		console.log('component was destroied');
+		console.log('component was destroyed');
 	});
 </script>
 

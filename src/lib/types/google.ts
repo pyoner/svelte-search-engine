@@ -177,7 +177,7 @@ export interface ComponentConfig {
 	div: string | Element;
 
 	/** The type of component(s) to be rendered. */
-	tag: 'search' | 'searchbox' | 'searchbox-only' | 'searchresults-only';
+	tag: 'search' | 'searchbox' | 'searchbox-only' | 'searchresults' | 'searchresults-only';
 
 	/** A unique name for this component. */
 	gname?: string;

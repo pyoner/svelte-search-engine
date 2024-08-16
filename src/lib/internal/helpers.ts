@@ -41,6 +41,7 @@ export function generateParams(
 				assert(contextValue.tag === 'searchbox', 'Context value should be ParamConf');
 				param = [contextValue, { ...paramBase, tag: baseTag }];
 			}
+			delete context[gname];
 		} else {
 			context[gname] = { ...paramBase, tag: baseTag };
 		}

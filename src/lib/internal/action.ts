@@ -1,6 +1,6 @@
 import type { Action } from 'svelte/action';
 
-import type { ComponentConfig } from '$lib/types/google';
+import type { ComponentConfig, OptComponentConfig } from '$lib/types/google';
 import type { UIComponents } from '$lib/types/components';
 
 import { api } from './api';
@@ -8,15 +8,19 @@ import { registryComponents } from './registry';
 import { subscribeComponents } from './store';
 import type { Gname } from '$lib/types/base';
 
-export type GcseActionParam = Required<Pick<ComponentConfig, 'gname' | 'tag' | 'attributes'>> &
-	Partial<Pick<ComponentConfig, 'div'>> & {
-		components?: UIComponents;
-	};
-export type GcseActionParamConf = GcseActionParam & Required<Pick<ComponentConfig, 'div'>>;
-export type GcseActionParamOptConf = GcseActionParamConf & { tag: 'searchresults' };
+export type WithGname = { gname: Gname };
+export type WithTag<T extends ComponentConfig['tag']> = { tag: T };
+export type WithComponents = {
+	components?: UIComponents;
+};
+export type ParamBase = ComponentConfig & WithGname & WithComponents;
+export type ParamObject = ParamBase & WithTag<'search' | 'searchbox-only' | 'searchresults-only'>;
+export type ParamConf = ParamBase & WithTag<'searchbox'>;
+export type ParamOptConf = OptComponentConfig & WithGname & WithComponents;
+
 export const gcseAction: Action<
 	HTMLElement,
-	GcseActionParam | [GcseActionParamConf, GcseActionParamOptConf] | undefined
+	ParamObject | [ParamConf, ParamOptConf] | undefined
 > = (node, param) => {
 	if (!param) {
 		return;

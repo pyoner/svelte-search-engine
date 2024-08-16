@@ -10,13 +10,15 @@ import type { Gname } from '$lib/types/base';
 
 export type WithGname = { gname: Gname };
 export type WithTag<T extends ComponentConfig['tag']> = { tag: T };
-export type WithComponents = {
+export type WithPartialComponents = {
 	components?: UIComponents;
 };
-export type ParamBase = ComponentConfig & WithGname & WithComponents;
-export type ParamObject = ParamBase & WithTag<'search' | 'searchbox-only' | 'searchresults-only'>;
+
+export type ParamBase = ComponentConfig & WithGname & WithPartialComponents;
+export type ParamObject = Omit<ParamBase, 'div'> &
+	WithTag<'search' | 'searchbox-only' | 'searchresults-only'>;
 export type ParamConf = ParamBase & WithTag<'searchbox'>;
-export type ParamOptConf = OptComponentConfig & WithGname & WithComponents;
+export type ParamOptConf = OptComponentConfig & WithGname & WithPartialComponents;
 
 export const gcseAction: Action<
 	HTMLElement,

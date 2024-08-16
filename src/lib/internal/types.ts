@@ -1,4 +1,9 @@
 import type { Gname } from '$lib/types/base';
-import type { ComponentConfig, OptComponentConfig } from '$lib/types/google';
+import type { UIComponents } from '$lib/types/components';
+import type { ComponentConfig } from '$lib/types/google';
 
-export type Context = Record<Gname, ComponentConfig | OptComponentConfig>;
+export type ContextValue = Required<ComponentConfig> & {
+	// tag: 'searchbox' | 'searchresults';
+	components?: UIComponents;
+};
+export type Context = Record<Gname, ContextValue>;

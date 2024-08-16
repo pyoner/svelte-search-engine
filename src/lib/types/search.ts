@@ -1,3 +1,5 @@
+import type { Gname } from './base';
+
 export type Promotion = {
 	content: string;
 	image: {
@@ -51,7 +53,7 @@ export type SearchCallback = {
 	 * If it returns an empty string, the return value is ignored and the caller uses
 	 * the unmodified query.
 	 */
-	starting?: (gname: string, query: string) => void | string;
+	starting?: (gname: Gname, query: string) => void | string;
 	/**
 	 * Results-Ready Callback
 	 *
@@ -68,7 +70,7 @@ export type SearchCallback = {
 	 * If this callback returns a true value, the Search Element JavaScript skips to its page-footer work.
 	 */
 	ready?: (
-		gname: string,
+		gname: Gname,
 		query: string,
 		promos: Promotion[] | undefined,
 		results: Result[],
@@ -96,7 +98,7 @@ export type SearchCallback = {
 	 * but changes to the entries in promos and results are changes to the DOM.
 	 * Note: Only those DOM elements rendered by the Search Element JavaScript itself are passed to the resultsRendered callback.
 	 */
-	rendered?: (gname: string, query: string, promos: HTMLElement[], results: HTMLElement[]) => void;
+	rendered?: (gname: Gname, query: string, promos: HTMLElement[], results: HTMLElement[]) => void;
 };
 
 export type Config = {

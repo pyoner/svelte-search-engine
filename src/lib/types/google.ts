@@ -1,9 +1,11 @@
+import type { Gname } from './base';
+
 /**
  * Defines optional attributes for configuration of search components.
  */
 export interface ComponentAttributes {
 	/** The name of the Search Element object. */
-	gname?: string;
+	gname?: Gname;
 
 	/** Whether to execute a search by the query embedded in the URL of the page that's loading. */
 	autoSearchOnLoad?: boolean;
@@ -180,7 +182,7 @@ export interface ComponentConfig {
 	tag: 'search' | 'searchbox' | 'searchbox-only' | 'searchresults' | 'searchresults-only';
 
 	/** A unique name for this component. */
-	gname?: string;
+	gname?: Gname;
 
 	/** Optional attributes for configuring the component. */
 	attributes?: ComponentAttributes;
@@ -197,7 +199,7 @@ export interface OptComponentConfig {
 	tag: 'searchresults';
 
 	/** A unique name for this component, which should match the gname of componentConfig. */
-	gname?: string;
+	gname?: Gname;
 
 	/** Optional attributes for configuring the component. */
 	attributes?: ComponentAttributes;
@@ -208,7 +210,7 @@ export interface OptComponentConfig {
  */
 export interface ElementObject {
 	/** The name of the element object. */
-	gname: string;
+	gname: Gname;
 
 	/** The type of element. */
 	type: string;
@@ -242,7 +244,7 @@ export interface ElementObject {
  * Represents a map of all successfully created element objects, keyed by gname.
  */
 export interface ElementMap {
-	[gname: string]: ElementObject;
+	[gname: Gname]: ElementObject;
 }
 
 /**
@@ -267,7 +269,7 @@ export interface CseElement {
 	 * @param gname The unique name of the element.
 	 * @returns The element object if found, otherwise null.
 	 */
-	getElement(gname: string): ElementObject | null;
+	getElement(gname: Gname): ElementObject | null;
 
 	/**
 	 * Returns a map of all successfully created element objects, keyed by gname.

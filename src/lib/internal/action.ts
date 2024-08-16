@@ -1,14 +1,16 @@
 import type { Action } from 'svelte/action';
 
+import type { Context } from './types';
 import type { ComponentConfig } from '$lib/types/google';
 import type { UIComponents } from '$lib/types/components';
 
-import { api } from '$lib/internal/api';
+import { api } from './api';
 import { registryComponents } from './registry';
 import { subscribeComponents } from './store';
 
 export type GcseActionParams = Required<Pick<ComponentConfig, 'gname' | 'tag' | 'attributes'>> & {
 	components?: UIComponents;
+	context?: Context;
 };
 export const gcseAction: Action<HTMLElement, GcseActionParams> = (
 	node,

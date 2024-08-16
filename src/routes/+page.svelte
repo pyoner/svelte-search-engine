@@ -39,7 +39,6 @@
 		</div>
 		<div>
 			<SearchBox
-				only={true}
 				attributes={{
 					gname: 'searchbox'
 				}}

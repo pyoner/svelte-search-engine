@@ -1,10 +1,16 @@
 <script lang="ts">
+	import { onMount, setContext } from 'svelte';
+
 	import { createDestroyObserver } from '$lib/internal/destroy';
 	import { init, createCallbacks } from '$lib/internal/store';
-	import { onMount } from 'svelte';
+
+	import type { Context } from '$lib/internal/types';
 
 	export let cx: string;
 	let src = 'https://cse.google.com/cse.js?cx=' + cx;
+
+	// set 'gcse' context to sync components with tag searchbox and searchresults
+	setContext<Context>('gcse', {});
 
 	const scriptLoading = new Promise((resolve, reject) => {
 		onMount(() => {

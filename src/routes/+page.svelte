@@ -4,6 +4,7 @@
 	import Results from '$lib/components/Results.svelte';
 	import Search from '$lib/components/Search.svelte';
 	import SearchBox from '$lib/components/SearchBox.svelte';
+	import SearchResults from '$lib/components/SearchResults.svelte';
 	import { rendered, ready } from '$lib/stores';
 
 	const cx = PUBLIC_CSE_CX;
@@ -40,9 +41,10 @@
 		<div>
 			<SearchBox
 				attributes={{
-					gname: 'searchbox'
+					gname: 'xxx'
 				}}
 			></SearchBox>
+			<SearchResults attributes={{ gname: 'xxx' }}></SearchResults>
 		</div>
 	</div>
 </Engine>

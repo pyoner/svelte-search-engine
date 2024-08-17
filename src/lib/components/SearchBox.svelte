@@ -1,15 +1,14 @@
 <script lang="ts">
-	import type { Gname } from '$lib/types/base';
+	import type { WithGname } from '$lib/internal/types';
 	import type { ComponentAttributes } from '$lib/types/google';
 
 	import { gcseAction } from '$lib/internal/action';
 	import { buildParams } from '$lib/internal/helpers';
 
-	export let attributes: ComponentAttributes & { gname: Gname };
-	let { gname } = attributes;
+	export let attributes: ComponentAttributes & WithGname;
 
 	export let only = false;
-	const { id, param } = buildParams('searchbox', only, gname, attributes);
+	const { id, param } = buildParams('searchbox', only, attributes);
 </script>
 
 <div {id} use:gcseAction={param}></div>

@@ -1,7 +1,6 @@
 import { getContext } from 'svelte';
 
-import type { Gname } from '$lib/types/base';
-import type { Context } from '$lib/internal/types';
+import type { Context, WithGname } from '$lib/internal/types';
 import type { UIComponents } from '$lib/types/components';
 import type { ComponentAttributes } from '$lib/types/google';
 
@@ -18,11 +17,11 @@ export const randomString = () => Math.random().toString(16).slice(2);
 export function buildParams(
 	baseTag: 'searchbox' | 'searchresults',
 	only: boolean,
-	gname: Gname,
-	attributes: ComponentAttributes,
+	attributes: ComponentAttributes & WithGname,
 	components?: UIComponents
 ) {
 	const id = randomString();
+	const { gname } = attributes;
 	const paramBase = { div: id, gname, attributes, components };
 
 	let param: Parameters<typeof gcseAction>[1] = undefined;

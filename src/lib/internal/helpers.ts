@@ -15,7 +15,7 @@ export function assert(condition: unknown, msg?: string): asserts condition {
 
 export const randomString = () => Math.random().toString(16).slice(2);
 
-export function generateParams(
+export function buildParams(
 	baseTag: 'searchbox' | 'searchresults',
 	only: boolean,
 	gname: Gname,

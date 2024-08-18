@@ -227,7 +227,7 @@ export interface ComponentAttributes {
 
 	/** Extra terms added to search query using logical OR. */
 	webSearchQueryAddition?: string;
- * Defines optional attributes for configuration of search components.
+
 	/** The maximum size of the web search results set. */
 	webSearchResultSetSize?: number | string
 	...
@@ -271,7 +271,7 @@ export interface ComponentAttributes {
 
 	/** Sets the link target. Default: _blank */
 	linkTarget?: '_blank' | '_self' | '_parent' | '_top';
- * Defines optional attributes for configuration of search components.
+
 	/** Specifies the default text to display when no results match the query. */
 	noResultsString?: string
 ```

@@ -25,6 +25,18 @@
 		"!dist/**/*.test.*",
 		"!dist/**/*.spec.*"
 	],
+	"keywords": [
+		"google",
+		"google-programmable-search",
+		"programmable-search",
+		"programmable-search-engine",
+		"search-engine",
+		"svelte",
+		"svelte-kit",
+		"svelte-wrapper",
+		"svelte-component",
+		"typescript"
+	],
 	"peerDependencies": {
 		"svelte": "^4.0.0"
 	},

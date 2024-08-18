@@ -65,6 +65,6 @@
 	"type": "module",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/pyoner/svelte-search-engine"
+		"url": "git+https://github.com/pyoner/svelte-search-engine.git"
 	}
 }

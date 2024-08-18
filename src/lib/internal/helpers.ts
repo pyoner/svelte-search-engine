@@ -4,7 +4,7 @@ import type { Context, WithGname } from '$lib/internal/types';
 import type { UIComponents } from '$lib/types/components';
 import type { ComponentAttributes } from '$lib/types/google';
 
-import type { gcseAction } from '$lib/internal/action';
+import type { searchEngine } from '$lib/internal/action';
 
 export function assert(condition: unknown, msg?: string): asserts condition {
 	if (!condition) {
@@ -24,7 +24,7 @@ export function buildParams(
 	const { gname } = attributes;
 	const paramBase = { div: id, gname, attributes, components };
 
-	let param: Parameters<typeof gcseAction>[1] = undefined;
+	let param: Parameters<typeof searchEngine>[1] = undefined;
 
 	if (only) {
 		param = { ...paramBase, tag: `${baseTag}-only` };

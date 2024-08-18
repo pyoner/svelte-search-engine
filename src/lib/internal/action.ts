@@ -8,7 +8,7 @@ import { api } from './api';
 import { registryComponents } from './registry';
 import { subscribeComponents } from './store';
 
-export const gcseAction: Action<
+export const searchEngine: Action<
 	HTMLElement,
 	ParamObject | [ParamConf, ParamOptConf] | undefined
 > = (node, param) => {

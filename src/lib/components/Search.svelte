@@ -3,7 +3,7 @@
 	import type { UIComponents } from '$lib/types/components';
 	import type { ComponentAttributes } from '$lib/types/google';
 
-	import { gcseAction } from '$lib/internal/action';
+	import { searchEngine } from '$lib/internal/action';
 
 	export let attributes: ComponentAttributes & WithGname;
 	let { gname } = attributes;
@@ -12,4 +12,4 @@
 	const param = { tag: 'search', gname, attributes, components } as const;
 </script>
 
-<div use:gcseAction={param}></div>
+<div use:searchEngine={param}></div>

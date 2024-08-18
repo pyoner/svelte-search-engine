@@ -62,5 +62,9 @@
 	},
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
-	"type": "module"
+	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pyoner/svelte-search-engine"
+	}
 }

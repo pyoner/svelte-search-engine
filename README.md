@@ -111,37 +111,37 @@ For a full list of available attributes, refer to the `ComponentAttributes` inte
 export interface ComponentAttributes {
 	/** The name of the Search Element object. */
 	gname?: Gname;
-	gname?: Gname;
+
 	/** Whether to execute a search by the query embedded in the URL of the page that's loading. */
 	autoSearchOnLoad?: boolean;
-	autoSearchOnLoad?: boolean;
+
 	/** Enables history management for the browser Back and Forward buttons. */
 	enableHistory?: boolean;
-	enableHistory?: boolean;
+
 	/** The query parameter name embedded in the URL. */
 	queryParameterName?: string;
-	queryParameterName?: string;
+
 	/** The URL of the results page. */
 	resultsUrl?: string;
-	resultsUrl?: string;
+
 	/** Whether the results page opens in a new window. */
 	newWindow?: boolean;
-	newWindow?: boolean;
+
 	/** Allows invalid traffic-only cookies and local storage based on consent status. */
 	ivt?: boolean;
-	ivt?: boolean;
+
 	/** Specifies whether the mobile layout styles should be used for mobile devices. */
 	mobileLayout?: 'enabled' | 'disabled' | 'forced';
-	mobileLayout?: 'enabled' | 'disabled' | 'forced';
+
 	/** Enables autocomplete if configured in the control panel. */
 	enableAutoComplete?: boolean;
-	enableAutoComplete?: boolean;
+
 	/** The maximum number of autocompletions to display. */
 	autoCompleteMaxCompletions?: number;
-	autoCompleteMaxCompletions?: number;
+
 	/** The maximum number of promotions to display in autocomplete. */
-	autoCompleteMaxPromotions?: number
-	autoCompleteMaxPromotions?: number
+	autoCompleteMaxPromotions?: number;
+
 	/** Comma-separated list of languages for which autocomplete should be enabled. */
 	autoCompleteValidLanguages?: string;
 
@@ -176,16 +176,16 @@ export interface ComponentAttributes {
 		| 'cc_sharealike'
 		| 'cc_noncommercial'
 		| 'cc_nonderived';
-	image_as_rights?:
-	/** Restrict results to pages from a specific site. */
-	image_as_sitesearch?: string
-		| 'cc_sharealike'
-		| 'cc_noncommercial'
-		| 'cc_nonderived';
 
 	/** Restrict results to pages from a specific site. */
-	image_as_sitesearch?: string
-	...
+	image_as_sitesearch?: string;
+
+	/** Restricts search to black and white, grayscale, or color images. */
+	image_colortype?: 'mono' | 'gray' | 'color';
+
+	/** Restricts search results to documents originating in a particular country. */
+	image_cr?: string;
+
 	/** Restricts search to images of a specific dominant color. */
 	image_dominantcolor?:
 		| 'red'
@@ -200,10 +200,10 @@ export interface ComponentAttributes {
 		| 'gray'
 		| 'black'
 		| 'brown';
-		| 'purple'
+
 	/** Enables or disables automatic filtering of search results. */
 	image_filter?: '0' | '1';
-		| 'gray'
+
 	/** Boosts search results whose country of origin matches the parameter value. */
 	image_gl?: string;
 
@@ -223,14 +223,14 @@ export interface ComponentAttributes {
 	webSearchQueryAddition?: string;
 
 	/** The maximum size of the web search results set. */
-	webSearchResultSetSize?: number | string
+	webSearchResultSetSize?: number | string;
 
-	/** Extra terms added to search query using logical OR. */
-	webSearchQueryAddition?: string;
+	/** Specifies if SafeSearch is enabled for web search results. */
+	webSearchSafesearch?: 'off' | 'active';
 
-	/** The maximum size of the web search results set. */
-	webSearchResultSetSize?: number | string
-	...
+	/** Restricts results to files of a specified extension. */
+	as_filetype?: string;
+
 	/** Filters search results using Logical OR. */
 	as_oq?: string;
 
@@ -241,10 +241,10 @@ export interface ComponentAttributes {
 		| 'cc_sharealike'
 		| 'cc_noncommercial'
 		| 'cc_nonderived';
-	as_rights?:
+
 	/** Restrict results to pages from a specific site. */
 	as_sitesearch?: string;
-		| 'cc_sharealike'
+
 	/** Restricts search results to documents originating in a particular country. */
 	cr?: string;
 
@@ -267,13 +267,14 @@ export interface ComponentAttributes {
 	linkTarget?: '_blank' | '_self' | '_parent' | '_top';
 
 	/** Specifies the default text to display when no results match the query. */
-	noResultsString?: string
+	noResultsString?: string;
 
-	/** Sets the link target. Default: _blank */
-	linkTarget?: '_blank' | '_self' | '_parent' | '_top';
+	/** The maximum size of the results set. */
+	resultSetSize?: number | string;
 
-	/** Specifies the default text to display when no results match the query. */
-	noResultsString?: string
+	/** Specifies if SafeSearch is enabled for both web and image search. */
+	safeSearch?: 'off' | 'active';
+}
 ```
 
 

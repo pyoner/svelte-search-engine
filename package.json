@@ -1,5 +1,6 @@
 {
 	"name": "svelte-search-engine",
+	"description": "A wrapper for Google's Programmable Search Engine, providing a Svelte-friendly interface.",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",

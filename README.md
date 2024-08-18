@@ -144,10 +144,10 @@ export interface ComponentAttributes {
 	autoCompleteMaxPromotions?: number
 	/** Comma-separated list of languages for which autocomplete should be enabled. */
 	autoCompleteValidLanguages?: string;
- * Defines optional attributes for configuration of search components.
+
 	/** Specifies the default refinement label to display. */
 	defaultToRefinement?: string;
-	...
+
 	/** Specifies the style of refinements, either tab or link. */
 	refinementStyle?: 'tab' | 'link';
 
@@ -182,7 +182,7 @@ export interface ComponentAttributes {
 		| 'cc_sharealike'
 		| 'cc_noncommercial'
 		| 'cc_nonderived';
- * Defines optional attributes for configuration of search components.
+
 	/** Restrict results to pages from a specific site. */
 	image_as_sitesearch?: string
 	...

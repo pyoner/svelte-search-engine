@@ -1,6 +1,6 @@
 import { writable, type Unsubscriber } from 'svelte/store';
 import type { Promotion, Result, SearchCallback } from '$lib/types/search';
-import type { CseComponent, UIComponents } from '$lib/types/components';
+import type { SearchEngineComponent, UIComponents } from '$lib/types/components';
 
 import { registry } from './registry';
 import { destroyRegistry } from './destroy';
@@ -51,7 +51,7 @@ export function createCallbacks(type: SearchType): SearchCallback {
 	};
 }
 
-export function subscribeComponent(gname: string, component: typeof CseComponent) {
+export function subscribeComponent(gname: string, component: typeof SearchEngineComponent) {
 	return ready.subscribe((input) => {
 		if (!input) {
 			return;

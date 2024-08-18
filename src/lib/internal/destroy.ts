@@ -1,6 +1,6 @@
-import type { CseComponent } from '$lib/types/components';
+import type { SearchEngineComponent } from '$lib/types/components';
 
-export const destroyRegistry = new Map<Node, CseComponent>();
+export const destroyRegistry = new Map<Node, SearchEngineComponent>();
 
 export const createDestroyObserver = () =>
 	new MutationObserver((mutationsList) => {

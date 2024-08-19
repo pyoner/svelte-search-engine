@@ -9,6 +9,11 @@
 	export let cx: string;
 	let src = 'https://cse.google.com/cse.js?cx=' + cx;
 
+	export let className = '';
+	export let style = '';
+
+	let mainElement: HTMLElement;
+
 	// set 'gcse' context to sync components with tag searchbox and searchresults
 	setContext<Context>('gcse', {});
 
@@ -32,7 +37,7 @@
 			document.head.appendChild(script);
 
 			const destroyObserver = createDestroyObserver();
-			destroyObserver.observe(document.body, {
+			destroyObserver.observe(mainElement, {
 				childList: true,
 				subtree: true
 			});
@@ -42,10 +47,14 @@
 	});
 </script>
 
-{#await scriptLoading}
-	loading...
-{:then}
-	<slot />
-{:catch err}
-	error {err}
-{/await}
+<div bind:this={mainElement} class={className} {style}>
+	{#await scriptLoading}
+		<slot name="loading">loading...</slot>
+	{:then}
+		<slot />
+	{:catch error}
+		<slot name="error" {error}>
+			Error: {error}
+		</slot>
+	{/await}
+</div>

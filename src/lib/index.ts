@@ -1,4 +1,6 @@
-// Reexport your entry components here
+// export types
+export type { ElementObject, ElementMap, CseElement, ComponentAttributes } from './types/google';
+export type { Result, Promotion } from './types/search';
 
 // export components
 export { default as Engine } from './components/Engine.svelte';

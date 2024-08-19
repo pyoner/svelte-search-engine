@@ -17,7 +17,7 @@
 	// set 'gcse' context to sync components with tag searchbox and searchresults
 	setContext<Context>('gcse', {});
 
-	const scriptLoading = new Promise((resolve, reject) => {
+	const scriptInitialization = new Promise((resolve, reject) => {
 		onMount(() => {
 			window.__gcse = {
 				parsetags: 'explicit', // Defaults to 'onload'
@@ -49,7 +49,7 @@
 </script>
 
 <div bind:this={mainElement} class={className} {style}>
-	{#await scriptLoading}
+	{#await scriptInitialization}
 		<slot name="loading">loading...</slot>
 	{:then}
 		<slot />

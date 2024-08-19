@@ -1,15 +1,15 @@
 <script lang="ts">
-	import type { Promotion, Result } from '$lib/types/search';
+	import type { Result } from '$lib/types/search';
 	import { onDestroy } from 'svelte';
 
-	export let promos: Promotion[] | undefined;
+	// export let promos: Promotion[] | undefined;
 	export let results: Result[];
 	onDestroy(() => {
 		console.log('component was destroyed');
 	});
 </script>
 
-{promos}
+<!-- {promos} -->
 
 <ul>
 	{#each results as result}

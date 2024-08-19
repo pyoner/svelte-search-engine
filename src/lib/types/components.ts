@@ -2,7 +2,7 @@ import { SvelteComponent } from 'svelte';
 import type { Promotion, Result } from './search';
 
 export class SearchEngineComponent extends SvelteComponent<{
-	promos: Promotion[] | undefined;
+	promos?: Promotion[];
 	results: Result[];
 }> {}
 

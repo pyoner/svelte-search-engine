@@ -17,4 +17,4 @@ export {
 } from './stores';
 
 // export search element api
-export { api as searchElementApi } from './internal/api';
+export { searchElementApi } from './internal/api';

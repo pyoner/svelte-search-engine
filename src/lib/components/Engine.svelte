@@ -22,6 +22,7 @@
 			window.__gcse = {
 				parsetags: 'explicit', // Defaults to 'onload'
 				initializationCallback() {
+					resolve(true);
 					init.set(true);
 				},
 				searchCallbacks: {
@@ -32,7 +33,7 @@
 
 			const script = document.createElement('script');
 			script.src = src;
-			script.onload = resolve;
+			// script.onload = resolve;
 			script.onerror = reject;
 			document.head.appendChild(script);
 

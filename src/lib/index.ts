@@ -14,5 +14,5 @@ export {
 	starting as startingStore
 } from './stores';
 
-// export google api
-export { api as cseElementApi } from './internal/api';
+// export search element api
+export { api as searchElementApi } from './internal/api';

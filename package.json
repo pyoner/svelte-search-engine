@@ -3,16 +3,17 @@
 	"description": "A wrapper for Google's Programmable Search Engine, providing a Svelte-friendly interface.",
 	"version": "0.0.5",
 	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build && npm run package",
-		"preview": "vite preview",
+		"dev": "vp dev",
+		"build": "vp build && npm run package",
+		"preview": "vp preview",
 		"package": "svelte-kit sync && svelte-package && publint",
 		"prepublishOnly": "npm run package",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"test": "vitest",
-		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
+		"test": "vp test",
+		"lint": "vp fmt --check . && vp lint .",
+		"format": "vp fmt .",
+		"prepare": "vp config"
 	},
 	"exports": {
 		".": {
@@ -46,19 +47,17 @@
 		"@sveltejs/package": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@types/eslint": "^9.6.0",
-		"eslint": "^9.0.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.36.0",
 		"globals": "^15.0.0",
-		"prettier": "^3.1.1",
-		"prettier-plugin-svelte": "^3.1.2",
 		"publint": "^0.1.9",
 		"svelte": "^4.2.7",
 		"svelte-check": "^3.6.0",
-		"typescript": "^5.0.0",
+		"typescript": "^6.0.3",
 		"typescript-eslint": "^8.0.0",
-		"vite": "^5.0.11",
-		"vitest": "^2.0.0"
+		"vite": "npm:@voidzero-dev/vite-plus-core@latest",
+		"vitest": "npm:@voidzero-dev/vite-plus-test@latest",
+		"vite-plus": "latest"
 	},
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
@@ -67,5 +66,10 @@
 		"type": "git",
 		"url": "git+https://github.com/pyoner/svelte-search-engine.git"
 	},
-	"license": "MIT"
+	"license": "MIT",
+	"packageManager": "bun@1.3.14",
+	"overrides": {
+		"vite": "npm:@voidzero-dev/vite-plus-core@latest",
+		"vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+	}
 }

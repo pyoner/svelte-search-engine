@@ -17,7 +17,6 @@ A customizable search engine component library for Svelte applications, powered 
 npm install svelte-search-engine
 ```
 
-
 ## Usage
 
 1. Set up a Google Programmable Search Engine and obtain your CX ID.
@@ -46,7 +45,6 @@ PUBLIC_CSE_CX=your_cx_id_here
 </Engine>
 ```
 
-
 ## Components
 
 ### Engine
@@ -58,7 +56,6 @@ The `Engine` component initializes the Google Custom Search Engine script and pr
   <!-- Other search components go here -->
 </Engine>
 ```
-
 
 ### Search
 
@@ -74,7 +71,6 @@ The `Search` component renders a complete search interface, including the search
 />
 ```
 
-
 ### SearchBox
 
 The `SearchBox` component renders only the search input field.
@@ -86,7 +82,6 @@ The `SearchBox` component renders only the search input field.
   }}
 />
 ```
-
 
 ### SearchResults
 
@@ -100,7 +95,6 @@ The `SearchResults` component renders only the search results.
   components={{ web: CustomResultsComponent }}
 />
 ```
-
 
 ## Customization
 
@@ -277,7 +271,6 @@ export interface ComponentAttributes {
 }
 ```
 
-
 ## Stores
 
 The library provides reactive stores for managing search state:
@@ -285,10 +278,10 @@ The library provides reactive stores for managing search state:
 ```typescript
 import { init, starting, ready, rendered } from 'svelte-search-engine';
 
-init.subscribe(value => console.log('Initialization state:', value));
-starting.subscribe(value => console.log('Search starting:', value));
-ready.subscribe(value => console.log('Search results ready:', value));
-rendered.subscribe(value => console.log('Search results rendered:', value));
+init.subscribe((value) => console.log('Initialization state:', value));
+starting.subscribe((value) => console.log('Search starting:', value));
+ready.subscribe((value) => console.log('Search results ready:', value));
+rendered.subscribe((value) => console.log('Search results rendered:', value));
 ```
 
 ## Custom Results Component
@@ -318,7 +311,6 @@ Then use it in the `Search` or `SearchResults` component:
 ## License
 
 MIT
-
 
 ## Contributing
 

@@ -18,8 +18,10 @@ export default defineConfig({
 			correctness: 'warn'
 		},
 		env: {
+			browser: true,
 			builtin: true,
-			commonjs: true
+			commonjs: true,
+			svelte: true
 		},
 		rules: {
 			'no-undef': 'off',

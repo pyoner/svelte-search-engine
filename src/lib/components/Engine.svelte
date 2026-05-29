@@ -48,7 +48,7 @@
 			document.head.appendChild(script);
 
 			const destroyObserver = createDestroyObserver();
-			destroyObserver.observe(mainElement, {
+			destroyObserver.observe(mainElement!, {
 				childList: true,
 				subtree: true
 			});

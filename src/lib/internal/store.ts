@@ -1,3 +1,4 @@
+import { mount } from 'svelte';
 import { writable, type Unsubscriber } from 'svelte/store';
 import type { Promotion, Result, SearchCallback } from '$lib/types/search';
 import type { SearchEngineComponent, UIComponents } from '$lib/types/components';
@@ -51,13 +52,13 @@ export function createCallbacks(type: SearchType): SearchCallback {
 	};
 }
 
-export function subscribeComponent(gname: string, component: typeof SearchEngineComponent) {
+export function subscribeComponent(gname: string, component: SearchEngineComponent) {
 	return ready.subscribe((input) => {
 		if (!input) {
 			return;
 		}
 
-		const c = new component({
+		const c = mount(component, {
 			target: input.div,
 			props: {
 				promos: input.promos,

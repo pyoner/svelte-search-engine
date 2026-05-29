@@ -1,6 +1,6 @@
-import type { SearchEngineComponent } from '$lib/types/components';
+import { unmount } from 'svelte';
 
-export const destroyRegistry = new Map<Node, SearchEngineComponent>();
+export const destroyRegistry = new Map<Node, Record<PropertyKey, unknown>>();
 
 export const createDestroyObserver = () =>
 	new MutationObserver((mutationsList) => {
@@ -13,7 +13,7 @@ export const createDestroyObserver = () =>
 					const component = destroyRegistry.get(node);
 					if (component) {
 						destroyRegistry.delete(node);
-						component.$destroy();
+						void unmount(component);
 					}
 				});
 			}

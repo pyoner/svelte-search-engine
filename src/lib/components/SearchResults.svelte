@@ -6,12 +6,17 @@
 	import { searchEngine } from '$lib/internal/action';
 	import { buildParams } from '$lib/internal/helpers';
 
-	export let attributes: ComponentAttributes & WithGname;
+	let {
+		attributes,
+		components = undefined,
+		only = false
+	}: {
+		attributes: ComponentAttributes & WithGname;
+		components?: UIComponents;
+		only?: boolean;
+	} = $props();
 
-	export let components: UIComponents | undefined = undefined;
-	export let only = false;
-
-	const { id, param } = buildParams('searchresults', only, attributes, components);
+	let { id, param } = $derived(buildParams('searchresults', only, attributes, components));
 </script>
 
 <div {id} use:searchEngine={param}></div>

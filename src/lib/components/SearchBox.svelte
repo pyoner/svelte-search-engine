@@ -5,10 +5,15 @@
 	import { searchEngine } from '$lib/internal/action';
 	import { buildParams } from '$lib/internal/helpers';
 
-	export let attributes: ComponentAttributes & WithGname;
+	let {
+		attributes,
+		only = false
+	}: {
+		attributes: ComponentAttributes & WithGname;
+		only?: boolean;
+	} = $props();
 
-	export let only = false;
-	const { id, param } = buildParams('searchbox', only, attributes);
+	let { id, param } = $derived(buildParams('searchbox', only, attributes));
 </script>
 
 <div {id} use:searchEngine={param}></div>

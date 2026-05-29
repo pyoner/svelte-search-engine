@@ -1,26 +1,37 @@
 <script lang="ts">
 	import { onMount, setContext } from 'svelte';
+	import type { Snippet } from 'svelte';
 
 	import { createDestroyObserver } from '$lib/internal/destroy';
 	import { init, createCallbacks } from '$lib/internal/store';
 
 	import type { Context } from '$lib/internal/types';
 
-	export let cx: string;
-	let src = 'https://cse.google.com/cse.js?cx=' + cx;
+	let {
+		cx,
+		className = '',
+		style = '',
+		children,
+		loading,
+		error
+	}: {
+		cx: string;
+		className?: string;
+		style?: string;
+		children?: Snippet;
+		loading?: Snippet;
+		error?: Snippet<[unknown]>;
+	} = $props();
 
-	export let className = '';
-	export let style = '';
+	let mainElement: HTMLElement | undefined = undefined;
 
-	let mainElement: HTMLElement;
-
-	// set 'gcse' context to sync components with tag searchbox and searchresults
 	setContext<Context>('gcse', {});
 
 	const scriptInitialization = new Promise((resolve, reject) => {
 		onMount(() => {
+			const src = 'https://cse.google.com/cse.js?cx=' + cx;
 			window.__gcse = {
-				parsetags: 'explicit', // Defaults to 'onload'
+				parsetags: 'explicit',
 				initializationCallback() {
 					resolve(true);
 					init.set(true);
@@ -33,7 +44,6 @@
 
 			const script = document.createElement('script');
 			script.src = src;
-			// script.onload = resolve;
 			script.onerror = reject;
 			document.head.appendChild(script);
 
@@ -50,12 +60,18 @@
 
 <div bind:this={mainElement} class={className} {style}>
 	{#await scriptInitialization}
-		<slot name="loading">loading...</slot>
+		{#if loading}
+			{@render loading()}
+		{:else}
+			loading...
+		{/if}
 	{:then}
-		<slot />
-	{:catch error}
-		<slot name="error" {error}>
-			Error: {error}
-		</slot>
+		{@render children?.()}
+	{:catch err}
+		{#if error}
+			{@render error(err)}
+		{:else}
+			Error: {err}
+		{/if}
 	{/await}
 </div>

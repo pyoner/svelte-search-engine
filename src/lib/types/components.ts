@@ -1,12 +1,12 @@
-import { SvelteComponent } from 'svelte';
+import type { Component } from 'svelte';
 import type { Promotion, Result } from './search';
 
-export class SearchEngineComponent extends SvelteComponent<{
+export type SearchEngineComponent = Component<{
 	promos?: Promotion[];
 	results: Result[];
-}> {}
+}>;
 
 export type UIComponents = {
-	web?: typeof SearchEngineComponent;
-	image?: typeof SearchEngineComponent;
+	web?: SearchEngineComponent;
+	image?: SearchEngineComponent;
 };

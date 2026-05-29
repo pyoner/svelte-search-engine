@@ -5,11 +5,16 @@
 
 	import { searchEngine } from '$lib/internal/action';
 
-	export let attributes: ComponentAttributes & WithGname;
-	let { gname } = attributes;
+	let {
+		attributes,
+		components = undefined
+	}: {
+		attributes: ComponentAttributes & WithGname;
+		components?: UIComponents;
+	} = $props();
 
-	export let components: UIComponents | undefined = undefined;
-	const param = { tag: 'search', gname, attributes, components } as const;
+	let gname = $derived(attributes.gname);
+	let param = $derived({ tag: 'search' as const, gname, attributes, components });
 </script>
 
 <div use:searchEngine={param}></div>

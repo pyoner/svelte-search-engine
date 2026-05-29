@@ -3,8 +3,10 @@
 	import Engine from '$lib/components/Engine.svelte';
 
 	const cx = PUBLIC_CSE_CX;
+
+	let { children } = $props();
 </script>
 
 <Engine {cx}>
-	<slot></slot>
+	{@render children()}
 </Engine>

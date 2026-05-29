@@ -13,6 +13,8 @@ A customizable search engine component library for Svelte applications, powered 
 
 ## Installation
 
+Requires **Svelte 5** or later.
+
 ```bash
 npm install svelte-search-engine
 ```
@@ -292,8 +294,7 @@ You can create a custom results component to display search results:
 <script lang="ts">
   import type { Promotion, Result } from 'svelte-search-engine';
 
-  export let promos: Promotion[] | undefined;
-  export let results: Result[];
+  let { promos, results }: { promos?: Promotion[]; results: Result[] } = $props();
 </script>
 
 <!-- Your custom results layout here -->

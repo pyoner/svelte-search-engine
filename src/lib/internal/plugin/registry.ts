@@ -1,11 +1,11 @@
 import type { Plugin, PluginContext } from './types';
 import type { StartingInput, ReadyInput, RenderedInput } from '../store';
 
-const plugins: Plugin[] = [];
+const plugins: Plugin<unknown>[] = [];
 let initialized = false;
 let initCtx: PluginContext | null = null;
 
-export function usePlugin(plugin: Plugin) {
+export function usePlugin<TApi>(plugin: Plugin<TApi>): TApi | undefined {
 	plugins.push(plugin);
 
 	// If the system is already initialized, immediately run this plugin's init hook.
@@ -15,9 +15,10 @@ export function usePlugin(plugin: Plugin) {
 			console.warn(`[Plugin] init failed for ${plugin.name}:`, e);
 		});
 	}
+	return plugin.api;
 }
 
-export function getPlugins(): Plugin[] {
+export function getPlugins(): Plugin<unknown>[] {
 	return plugins.slice();
 }
 
@@ -30,13 +31,13 @@ export function clearPlugins() {
 /**
  * Topologically sort plugins by their dependencies.
  */
-function topologicalSort(plugins: Plugin[]): Plugin[] {
+function topologicalSort(plugins: Plugin<unknown>[]): Plugin<unknown>[] {
 	const visited = new Set<string>();
 	const temp = new Set<string>();
-	const result: Plugin[] = [];
+	const result: Plugin<unknown>[] = [];
 	const map = new Map(plugins.map((p) => [p.name, p]));
 
-	function visit(p: Plugin) {
+	function visit(p: Plugin<unknown>) {
 		if (temp.has(p.name)) {
 			throw new Error(`Plugin dependency cycle detected at ${p.name}`);
 		}

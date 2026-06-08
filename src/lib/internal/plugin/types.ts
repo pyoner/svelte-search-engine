@@ -4,7 +4,7 @@ export interface PluginContext {
 	[key: string]: unknown;
 }
 
-export interface Plugin {
+export interface Plugin<TApi = Record<string, unknown>> {
 	name: string;
 	dependencies?: string[];
 
@@ -15,4 +15,5 @@ export interface Plugin {
 	afterReady?: (input: ReadyInput, ctx: PluginContext) => void;
 	beforeRendered?: (input: RenderedInput, ctx: PluginContext) => void;
 	afterRendered?: (input: RenderedInput, ctx: PluginContext) => void;
+	api?: TApi;
 }

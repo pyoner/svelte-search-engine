@@ -27,10 +27,6 @@ export type Result = {
 	}>;
 	richSnippet: Array<Record<string, unknown>>; // For web search results only
 	thumbnailImage: Required<Image>;
-	/** Enriched by JSONP interceptor – large thumbnail (if available) */
-	thumbnailImageLarge?: Image;
-	/** Enriched by JSONP interceptor – medium thumbnail (if available) */
-	thumbnailImageMedium?: Image;
 	title: string;
 	titleNoFormatting: string;
 	url: string;

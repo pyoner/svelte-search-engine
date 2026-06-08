@@ -1,18 +1,21 @@
 <script lang="ts">
 	import type { Result } from '$lib/types/search';
-	import { getLargeThumbnailUrl } from '$lib';
+	import { usePlugin, thumbnailPlugin } from '$lib';
 
 	let { results }: { results: Result[] } = $props();
 
+	const thumb = usePlugin(thumbnailPlugin);
+
 	$effect(() => {
-		// Dump the enriched results array to the console so the JSONP payload
-		// (and the extra fields) can be inspected in DevTools.
-		console.log('[DemoResults] enriched results:', results);
+		// Dump the results array to the console for inspection
+		console.log('[DemoResults] results:', results);
 	});
 </script>
 
 <ul class="results">
 	{#each results as result}
+		{@const medium = thumb?.getMedium(result)}
+		{@const large = thumb?.getLarge(result)}
 		<li>
 			<a href={result.url} target="_blank" rel="noopener">
 				{result.visibleUrl}
@@ -29,22 +32,22 @@
 					/>
 				</div>
 
-				{#if result.thumbnailImageMedium}
+				{#if medium}
 					<div>
-						<strong>Medium ({result.thumbnailImageMedium.width ?? '?'}×{result.thumbnailImageMedium.height ?? '?'})</strong>
+						<strong>Medium ({medium.width ?? '?'}×{medium.height ?? '?'})</strong>
 						<img
-							src={result.thumbnailImageMedium.url}
+							src={medium.url}
 							alt={result.titleNoFormatting}
 							loading="lazy"
 						/>
 					</div>
 				{/if}
 
-				{#if result.thumbnailImageLarge}
+				{#if large}
 					<div>
-						<strong>Large ({result.thumbnailImageLarge.width ?? '?'}×{result.thumbnailImageLarge.height ?? '?'})</strong>
+						<strong>Large ({large.width ?? '?'}×{large.height ?? '?'})</strong>
 						<img
-							src={result.thumbnailImageLarge.url}
+							src={large.url}
 							alt={result.titleNoFormatting}
 							loading="lazy"
 						/>

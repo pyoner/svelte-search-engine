@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Result } from '$lib/types/search';
-	import { getLargeThumbnailUrl } from '$lib/internal/thumbnail';
+	import { getLargeThumbnailUrl } from '$lib';
 
 	let { results }: { results: Result[] } = $props();
 

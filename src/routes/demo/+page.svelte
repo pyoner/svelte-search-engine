@@ -1,6 +1,10 @@
 <script>
+	import { usePlugin, jsonInterceptorPlugin, thumbnailPlugin } from '$lib';
 	import Search from '$lib/components/Search.svelte';
 	import DemoResults from './DemoResults.svelte';
+
+	usePlugin(jsonInterceptorPlugin);
+	usePlugin(thumbnailPlugin);
 </script>
 
 <h1>Image Search – JSONP Interceptor Demo</h1>

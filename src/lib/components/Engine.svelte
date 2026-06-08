@@ -3,8 +3,8 @@
 	import type { Snippet } from 'svelte';
 
 	import { createDestroyObserver } from '$lib/internal/destroy';
-	import { init, createCallbacks } from '$lib/internal/store';
-	import { initJsonpInterceptor } from '$lib/internal/interceptor';
+	import { init, createCallbacks, pluginCtx } from '$lib/internal/store';
+	import { runInitHooks } from '$lib/internal/plugin';
 
 	import type { Context } from '$lib/internal/types';
 
@@ -34,7 +34,7 @@
 			window.__gcse = {
 				parsetags: 'explicit',
 				initializationCallback() {
-					initJsonpInterceptor();
+					runInitHooks(pluginCtx);
 					resolve(true);
 					init.set(true);
 				},

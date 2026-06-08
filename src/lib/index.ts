@@ -19,5 +19,9 @@ export {
 // export search element api
 export { searchElementApi } from './internal/api';
 
-// export thumbnail utilities
-export { enrichResults, getLargeThumbnailUrl, getMediumThumbnailUrl } from './internal/thumbnail';
+// export plugin system
+export { usePlugin } from './internal/plugin';
+
+// export built-in plugins
+export { jsonInterceptorPlugin } from './plugins/json-interceptor';
+export { thumbnailPlugin, getLargeThumbnailUrl, getMediumThumbnailUrl } from './plugins/thumbnail';

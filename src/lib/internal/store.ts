@@ -5,7 +5,15 @@ import type { SearchEngineComponent, UIComponents } from '$lib/types/components'
 
 import { registry } from './registry';
 import { destroyRegistry } from './destroy';
-import { enrichResults } from './interceptor';
+import {
+	createPluginContext,
+	runBeforeStartingHook,
+	runAfterStartingHook,
+	runBeforeReadyHook,
+	runAfterReadyHook,
+	runBeforeRenderedHook,
+	runAfterRenderedHook
+} from './plugin';
 
 export const searchType = ['web', 'image'] as const;
 export type SearchType = (typeof searchType)[number];
@@ -38,18 +46,28 @@ export const starting = writable<StartingInput | null>(null);
 export const ready = writable<ReadyInput | null>(null);
 export const rendered = writable<RenderedInput | null>(null);
 
+export const pluginCtx = createPluginContext();
+
 export function createCallbacks(type: SearchType): SearchCallback {
 	return {
 		starting(gname, query) {
-			starting.set({ type, gname, query });
+			const input = { type, gname, query };
+			runBeforeStartingHook(input, pluginCtx);
+			starting.set(input);
+			runAfterStartingHook(input, pluginCtx);
 		},
 		ready(gname, query, promos, results, div) {
-			enrichResults(results);
-			ready.set({ type, gname, query, promos, results, div });
+			const input = { type, gname, query, promos, results, div };
+			runBeforeReadyHook(input, pluginCtx);
+			ready.set(input);
+			runAfterReadyHook(input, pluginCtx);
 			return registry.has(type, gname) ? true : undefined;
 		},
 		rendered(gname, query, promos, results) {
-			rendered.set({ type, gname, query, promos, results });
+			const input = { type, gname, query, promos, results };
+			runBeforeRenderedHook(input, pluginCtx);
+			rendered.set(input);
+			runAfterRenderedHook(input, pluginCtx);
 		}
 	};
 }

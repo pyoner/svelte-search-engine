@@ -5,6 +5,7 @@ import type { SearchEngineComponent, UIComponents } from '$lib/types/components'
 
 import { registry } from './registry';
 import { destroyRegistry } from './destroy';
+import { enrichResults } from './interceptor';
 
 export const searchType = ['web', 'image'] as const;
 export type SearchType = (typeof searchType)[number];
@@ -43,6 +44,7 @@ export function createCallbacks(type: SearchType): SearchCallback {
 			starting.set({ type, gname, query });
 		},
 		ready(gname, query, promos, results, div) {
+			enrichResults(results);
 			ready.set({ type, gname, query, promos, results, div });
 			return registry.has(type, gname) ? true : undefined;
 		},

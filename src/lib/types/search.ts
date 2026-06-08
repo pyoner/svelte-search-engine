@@ -1,12 +1,14 @@
 import type { Gname } from './base';
 
+export type Image = {
+	url: string;
+	height?: number;
+	width?: number;
+};
+
 export type Promotion = {
 	content: string;
-	image: {
-		height: number;
-		url: string;
-		width: number;
-	};
+	image: Required<Image>;
 	title: string;
 	url: string;
 	visibleUrl: string;
@@ -17,23 +19,18 @@ export type Result = {
 	contentNoFormatting: string;
 	contextUrl?: string; // Optional, for image search results only
 	fileFormat: string;
-	image?: {
-		// Optional, for image search results only
-		height: number;
-		url: string;
-		width: number;
-	};
+	image?: Required<Image>; // Optional, for image search results only
 	perResultLabels: Array<{
 		anchor: string;
 		label: string;
 		labelWithOp: string;
 	}>;
 	richSnippet: Array<Record<string, unknown>>; // For web search results only
-	thumbnailImage: {
-		height: number;
-		url: string;
-		width: number;
-	};
+	thumbnailImage: Required<Image>;
+	/** Enriched by JSONP interceptor – large thumbnail (if available) */
+	thumbnailImageLarge?: Image;
+	/** Enriched by JSONP interceptor – medium thumbnail (if available) */
+	thumbnailImageMedium?: Image;
 	title: string;
 	titleNoFormatting: string;
 	url: string;

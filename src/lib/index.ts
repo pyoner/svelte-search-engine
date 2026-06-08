@@ -18,3 +18,6 @@ export {
 
 // export search element api
 export { searchElementApi } from './internal/api';
+
+// export thumbnail utilities
+export { enrichResults, getLargeThumbnailUrl, getMediumThumbnailUrl } from './internal/thumbnail';

@@ -4,6 +4,7 @@
 
 	import { createDestroyObserver } from '$lib/internal/destroy';
 	import { init, createCallbacks } from '$lib/internal/store';
+	import { initJsonpInterceptor } from '$lib/internal/interceptor';
 
 	import type { Context } from '$lib/internal/types';
 
@@ -33,6 +34,7 @@
 			window.__gcse = {
 				parsetags: 'explicit',
 				initializationCallback() {
+					initJsonpInterceptor();
 					resolve(true);
 					init.set(true);
 				},

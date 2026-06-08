@@ -13,9 +13,15 @@ export interface ThumbnailEntry {
 export interface ThumbnailApi {
 	getLarge(result: Result): Image | undefined;
 	getMedium(result: Result): Image | undefined;
+	clear(): void;
 }
 
 let pluginCtx: PluginContext | null = null;
+
+function getMap(): Map<string, ThumbnailEntry> | undefined {
+	if (!pluginCtx) return undefined;
+	return pluginCtx.thumbnailMap as Map<string, ThumbnailEntry> | undefined;
+}
 
 function extractImageId(result: Result): string | undefined {
 	const url = result.thumbnailImage?.url;
@@ -39,6 +45,13 @@ export const thumbnailPlugin: Plugin<ThumbnailApi> = {
 	init(ctx) {
 		pluginCtx = ctx;
 	},
+	beforeStarting() {
+		getMap()?.clear();
+	},
+	destroy() {
+		getMap()?.clear();
+		pluginCtx = null;
+	},
 	api: {
 		getLarge(result) {
 			const extra = lookupEntry(result);
@@ -55,6 +68,9 @@ export const thumbnailPlugin: Plugin<ThumbnailApi> = {
 			if (extra.mediumHeight !== undefined) medium.height = extra.mediumHeight;
 			if (extra.mediumWidth !== undefined) medium.width = extra.mediumWidth;
 			return medium;
+		},
+		clear() {
+			getMap()?.clear();
 		}
 	}
 };

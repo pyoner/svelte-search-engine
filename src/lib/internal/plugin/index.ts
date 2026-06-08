@@ -10,5 +10,6 @@ export {
 	runBeforeReadyHook,
 	runAfterReadyHook,
 	runBeforeRenderedHook,
-	runAfterRenderedHook
+	runAfterRenderedHook,
+	runDestroyHooks
 } from './registry';

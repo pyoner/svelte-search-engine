@@ -15,5 +15,6 @@ export interface Plugin<TApi = Record<string, unknown>> {
 	afterReady?: (input: ReadyInput, ctx: PluginContext) => void;
 	beforeRendered?: (input: RenderedInput, ctx: PluginContext) => void;
 	afterRendered?: (input: RenderedInput, ctx: PluginContext) => void;
+	destroy?: (ctx: PluginContext) => void;
 	api?: TApi;
 }

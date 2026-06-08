@@ -22,7 +22,13 @@ export function getPlugins(): Plugin<unknown>[] {
 	return plugins.slice();
 }
 
-export function clearPlugins() {
+export function clearPlugins(ctx?: PluginContext) {
+	if (ctx) {
+		const sorted = topologicalSort(plugins);
+		for (const plugin of sorted) {
+			plugin.destroy?.(ctx);
+		}
+	}
 	plugins.length = 0;
 	initialized = false;
 	initCtx = null;
@@ -115,5 +121,12 @@ export function runAfterRenderedHook(input: RenderedInput, ctx: PluginContext) {
 	const sorted = topologicalSort(plugins);
 	for (const plugin of sorted) {
 		plugin.afterRendered?.(input, ctx);
+	}
+}
+
+export function runDestroyHooks(ctx: PluginContext) {
+	const sorted = topologicalSort(plugins);
+	for (const plugin of sorted) {
+		plugin.destroy?.(ctx);
 	}
 }

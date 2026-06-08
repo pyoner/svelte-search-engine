@@ -10,6 +10,7 @@ A customizable search engine component library for Svelte applications, powered 
 - TypeScript support
 - Reactive stores for search state management
 - Customizable UI components for search results
+- Extensible plugin system with lifecycle hooks
 
 ## Installation
 
@@ -308,6 +309,99 @@ Then use it in the `Search` or `SearchResults` component:
   components={{ web: YourCustomResultsComponent }}
 />
 ```
+
+## Plugin System
+
+The library supports an extensible plugin architecture with lifecycle hooks that let you intercept and transform search data without mutating the core `Result` type.
+
+### Built-in Plugins
+
+Two plugins are included for extracting large thumbnails from image search results:
+
+```typescript
+import { usePlugin, jsonInterceptorPlugin, thumbnailPlugin } from 'svelte-search-engine';
+
+// Register before mounting Engine
+usePlugin(jsonInterceptorPlugin);
+usePlugin(thumbnailPlugin);
+```
+
+`jsonInterceptorPlugin` intercepts the raw CSE JSONP response and stores `tbLargeUrl` / `tbMedUrl` data. `thumbnailPlugin` (which depends on `jsonInterceptorPlugin`) exposes an API to retrieve large/medium thumbnails:
+
+```svelte
+<script>
+  import { usePlugin, thumbnailPlugin } from 'svelte-search-engine';
+
+  const thumb = usePlugin(thumbnailPlugin);
+
+  let { results } = $props();
+</script>
+
+{#each results as result}
+  {@const large = thumb?.getLarge(result)}
+  {#if large}
+    <img src={large.url} alt={result.title} />
+  {/if}
+{/each}
+```
+
+### Writing a Custom Plugin
+
+A plugin implements the `Plugin` interface with optional lifecycle hooks:
+
+```typescript
+import type { Plugin } from 'svelte-search-engine';
+
+export const myPlugin: Plugin<{ log: () => void }> = {
+	name: 'my-plugin',
+	dependencies: ['json-interceptor'], // optional
+	init(ctx) {
+		// Runs once after CSE script loads
+		ctx.myPluginState = {};
+	},
+	beforeStarting(input, ctx) {
+		// Runs before each search starts
+	},
+	beforeReady(input, ctx) {
+		// Runs when results are ready, before they are passed to components
+	},
+	afterReady(input, ctx) {
+		// Runs after results are passed to stores
+	},
+	destroy(ctx) {
+		// Cleanup when plugin is unregistered
+		delete ctx.myPluginState;
+	},
+	api: {
+		log() {
+			console.log('Hello from my plugin');
+		}
+	}
+};
+```
+
+Register it:
+
+```typescript
+import { usePlugin } from 'svelte-search-engine';
+
+usePlugin(myPlugin);
+```
+
+### Lifecycle Hooks
+
+| Hook             | When It Fires                                |
+| ---------------- | -------------------------------------------- |
+| `init`           | After CSE script loads                       |
+| `beforeStarting` | Before each search request                   |
+| `afterStarting`  | After search request is sent                 |
+| `beforeReady`    | When results are ready, before stores update |
+| `afterReady`     | After stores update                          |
+| `beforeRendered` | Before rendered callback                     |
+| `afterRendered`  | After rendered callback                      |
+| `destroy`        | When plugin is unregistered                  |
+
+Plugins are executed in dependency order (topological sort). A plugin can declare `dependencies` to ensure it runs after other plugins.
 
 ## License
 

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { Result } from '$lib/types/search';
+	import type { SearchEngineComponentProps } from '$lib/types/components';
 	import { usePlugin, thumbnailPlugin } from '$lib';
 
-	let { results }: { results: Result[] } = $props();
+	let { results }: SearchEngineComponentProps = $props();
 
 	const thumb = usePlugin(thumbnailPlugin);
 

@@ -81,6 +81,7 @@ export function subscribeComponent(gname: string, component: SearchEngineCompone
 		const c = mount(component, {
 			target: input.div,
 			props: {
+				gname: gname,
 				promos: input.promos,
 				results: input.results
 			}

@@ -1,6 +1,11 @@
 // export types
 export type { ElementObject, ElementMap, CseElement, ComponentAttributes } from './types/google';
 export type { Result, Promotion } from './types/search';
+export type {
+	SearchEngineComponentProps,
+	SearchEngineComponent,
+	UIComponents
+} from './types/components';
 
 // export components
 export { default as Engine } from './components/Engine.svelte';

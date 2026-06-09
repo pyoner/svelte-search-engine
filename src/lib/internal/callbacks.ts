@@ -1,5 +1,4 @@
-import type { Gname } from '$lib/types/base';
-import type { Promotion, Result, SearchCallback, SearchType } from '$lib/types/search';
+import type { SearchCallback, SearchType } from '$lib/types/search';
 import { registry } from './registry';
 import {
 	createPluginContext,
@@ -9,29 +8,6 @@ import {
 	type PluginManager
 } from './plugin';
 import { init, starting, ready, rendered } from './store';
-
-export type StartingInput = {
-	type: SearchType;
-	gname: Gname;
-	query: string;
-};
-
-export type ReadyInput = {
-	type: SearchType;
-	gname: Gname;
-	query: string;
-	promos: Promotion[] | undefined;
-	results: Result[];
-	div: HTMLElement;
-};
-
-export type RenderedInput = {
-	type: SearchType;
-	gname: Gname;
-	query: string;
-	promos: HTMLElement[];
-	results: HTMLElement[];
-};
 
 export function createCallbacks(
 	type: SearchType,

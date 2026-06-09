@@ -1,5 +1,5 @@
 import type { Plugin, PluginContext } from './types';
-import type { StartingInput, ReadyInput, RenderedInput } from '../callbacks';
+import type { StartingInput, ReadyInput, RenderedInput } from '../types';
 
 export interface PluginManager {
 	init(ctx: PluginContext): void;

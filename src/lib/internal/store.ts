@@ -9,7 +9,7 @@ import type {
 } from '$lib/types/components';
 
 import { destroyRegistry } from './destroy';
-import type { StartingInput, ReadyInput, RenderedInput } from './callbacks';
+import type { StartingInput, ReadyInput, RenderedInput } from './types';
 
 export const init = writable(false);
 export const starting = writable<StartingInput | null>(null);

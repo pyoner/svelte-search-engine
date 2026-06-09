@@ -1,7 +1,11 @@
 import { mount } from 'svelte';
 import { writable, type Unsubscriber } from 'svelte/store';
 import type { Promotion, Result, SearchCallback } from '$lib/types/search';
-import type { SearchEngineComponent, UIComponents } from '$lib/types/components';
+import type {
+	SearchEngineComponent,
+	SearchEngineComponentProps,
+	UIComponents
+} from '$lib/types/components';
 
 import { registry } from './registry';
 import { destroyRegistry } from './destroy';
@@ -84,7 +88,7 @@ export function subscribeComponent(gname: string, component: SearchEngineCompone
 				gname: gname,
 				promos: input.promos,
 				results: input.results
-			}
+			} satisfies SearchEngineComponentProps
 		});
 		destroyRegistry.set(input.div, c);
 	});

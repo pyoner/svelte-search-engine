@@ -1,7 +1,6 @@
 import { mount } from 'svelte';
 import { writable, type Unsubscriber } from 'svelte/store';
 import type { Gname } from '$lib/types/base';
-import type { Promotion, Result, SearchCallback, SearchType } from '$lib/types/search';
 import { searchType } from '$lib/types/search';
 import type {
 	SearchEngineComponent,
@@ -9,65 +8,13 @@ import type {
 	UIComponents
 } from '$lib/types/components';
 
-import { registry } from './registry';
 import { destroyRegistry } from './destroy';
-import type { PluginContext, PluginManager } from './plugin';
-
-export type StartingInput = {
-	type: SearchType;
-	gname: Gname;
-	query: string;
-};
-
-export type ReadyInput = {
-	type: SearchType;
-	gname: Gname;
-	query: string;
-	promos: Promotion[] | undefined;
-	results: Result[];
-	div: HTMLElement;
-};
-
-export type RenderedInput = {
-	type: SearchType;
-	gname: Gname;
-	query: string;
-	promos: HTMLElement[];
-	results: HTMLElement[];
-};
+import type { StartingInput, ReadyInput, RenderedInput } from './callbacks';
 
 export const init = writable(false);
 export const starting = writable<StartingInput | null>(null);
 export const ready = writable<ReadyInput | null>(null);
 export const rendered = writable<RenderedInput | null>(null);
-
-export function createCallbacks(
-	type: SearchType,
-	pluginCtx: PluginContext,
-	pluginManager: PluginManager
-): SearchCallback {
-	return {
-		starting(gname, query) {
-			const input = { type, gname, query };
-			pluginManager.runBeforeStarting(input, pluginCtx);
-			starting.set(input);
-			pluginManager.runAfterStarting(input, pluginCtx);
-		},
-		ready(gname, query, promos, results, div) {
-			const input = { type, gname, query, promos, results, div };
-			pluginManager.runBeforeReady(input, pluginCtx);
-			ready.set(input);
-			pluginManager.runAfterReady(input, pluginCtx);
-			return registry.has(type, gname) ? true : undefined;
-		},
-		rendered(gname, query, promos, results) {
-			const input = { type, gname, query, promos, results };
-			pluginManager.runBeforeRendered(input, pluginCtx);
-			rendered.set(input);
-			pluginManager.runAfterRendered(input, pluginCtx);
-		}
-	};
-}
 
 export function subscribeComponent(gname: Gname, component: SearchEngineComponent) {
 	return ready.subscribe((input) => {

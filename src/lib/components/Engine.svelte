@@ -3,7 +3,8 @@
 	import type { Snippet } from 'svelte';
 
 	import { createDestroyObserver } from '$lib/internal/destroy';
-	import { init, createCallbacks } from '$lib/internal/store';
+	import { init } from '$lib/internal/store';
+	import { createCallbacks } from '$lib/internal/callbacks';
 	import { createPluginContext, createPluginManager, type PluginManager } from '$lib/internal/plugin';
 
 	import type { Context } from '$lib/internal/types';

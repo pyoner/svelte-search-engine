@@ -1,4 +1,4 @@
-import type { StartingInput, ReadyInput, RenderedInput } from '../store';
+import type { StartingInput, ReadyInput, RenderedInput } from '../callbacks';
 
 export interface PluginContext {
 	[key: string]: unknown;

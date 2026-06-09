@@ -1,8 +1,9 @@
 import type { Component } from 'svelte';
+import type { Gname } from './base';
 import type { Promotion, Result, SearchType } from './search';
 
 export type SearchEngineComponentProps = {
-	gname: string;
+	gname: Gname;
 	type: SearchType;
 	promos?: Promotion[];
 	results: Result[];

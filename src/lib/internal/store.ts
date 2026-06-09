@@ -1,5 +1,6 @@
 import { mount } from 'svelte';
 import { writable, type Unsubscriber } from 'svelte/store';
+import type { Gname } from '$lib/types/base';
 import type { Promotion, Result, SearchCallback, SearchType } from '$lib/types/search';
 import { searchType } from '$lib/types/search';
 import type {
@@ -22,13 +23,13 @@ import {
 
 export type StartingInput = {
 	type: SearchType;
-	gname: string;
+	gname: Gname;
 	query: string;
 };
 
 export type ReadyInput = {
 	type: SearchType;
-	gname: string;
+	gname: Gname;
 	query: string;
 	promos: Promotion[] | undefined;
 	results: Result[];
@@ -37,7 +38,7 @@ export type ReadyInput = {
 
 export type RenderedInput = {
 	type: SearchType;
-	gname: string;
+	gname: Gname;
 	query: string;
 	promos: HTMLElement[];
 	results: HTMLElement[];
@@ -74,7 +75,7 @@ export function createCallbacks(type: SearchType): SearchCallback {
 	};
 }
 
-export function subscribeComponent(gname: string, component: SearchEngineComponent) {
+export function subscribeComponent(gname: Gname, component: SearchEngineComponent) {
 	return ready.subscribe((input) => {
 		if (!input) {
 			return;
@@ -93,7 +94,7 @@ export function subscribeComponent(gname: string, component: SearchEngineCompone
 	});
 }
 
-export function subscribeComponents(gname: string, components: UIComponents) {
+export function subscribeComponents(gname: Gname, components: UIComponents) {
 	const arr = searchType.reduce<Unsubscriber[]>((acc, k) => {
 		const component = components[k];
 		if (component) {

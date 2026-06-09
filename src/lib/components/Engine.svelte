@@ -3,9 +3,7 @@
 	import type { Snippet } from 'svelte';
 
 	import { createDestroyObserver } from '$lib/internal/destroy';
-	import { init } from '$lib/internal/store';
-	import { createCallbacks } from '$lib/internal/callbacks';
-	import { createPluginContext, createPluginManager, type PluginManager } from '$lib/internal/plugin';
+	import { createCSECallbacks } from '$lib/internal/callbacks';
 
 	import type { Context } from '$lib/internal/types';
 	import type { Plugin } from '$lib/internal/plugin';
@@ -32,23 +30,16 @@
 
 	setContext<Context>('gcse', {});
 
-	const pluginCtx = createPluginContext();
-	const pluginManager = createPluginManager(plugins);
-
 	const scriptInitialization = new Promise((resolve, reject) => {
 		onMount(() => {
 			const src = 'https://cse.google.com/cse.js?cx=' + cx;
+		const cseCallbacks = createCSECallbacks(plugins, () => {
+			resolve(true);
+		});
+
 			window.__gcse = {
 				parsetags: 'explicit',
-				async initializationCallback() {
-					await pluginManager.init(pluginCtx);
-					resolve(true);
-					init.set(true);
-				},
-				searchCallbacks: {
-					image: createCallbacks('image', pluginCtx, pluginManager),
-					web: createCallbacks('web', pluginCtx, pluginManager)
-				}
+				...cseCallbacks
 			};
 
 			const script = document.createElement('script');
@@ -63,7 +54,7 @@
 			});
 
 			return () => {
-				pluginManager.destroy(pluginCtx);
+				cseCallbacks.destroy();
 				destroyObserver.disconnect();
 			};
 		});

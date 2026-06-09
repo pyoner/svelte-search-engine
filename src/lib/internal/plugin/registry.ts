@@ -2,7 +2,7 @@ import type { Plugin, PluginContext } from './types';
 import type { StartingInput, ReadyInput, RenderedInput } from '../callbacks';
 
 export interface PluginManager {
-	init(ctx: PluginContext): Promise<void>;
+	init(ctx: PluginContext): void;
 	runBeforeStarting(input: StartingInput, ctx: PluginContext): void;
 	runAfterStarting(input: StartingInput, ctx: PluginContext): void;
 	runBeforeReady(input: ReadyInput, ctx: PluginContext): void;
@@ -15,11 +15,9 @@ export interface PluginManager {
 export function createPluginManager(plugins: Plugin<unknown>[]): PluginManager {
 	const sorted = topologicalSort(plugins);
 	return {
-		async init(ctx) {
+		init(ctx) {
 			for (const plugin of sorted) {
-				if (plugin.init) {
-					await Promise.resolve(plugin.init(ctx));
-				}
+				plugin.init?.(ctx);
 			}
 		},
 		runBeforeStarting(input, ctx) {

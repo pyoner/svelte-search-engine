@@ -8,7 +8,7 @@ export interface Plugin<TApi = Record<string, unknown>> {
 	name: string;
 	dependencies?: string[];
 
-	init?: (ctx: PluginContext) => void | Promise<void>;
+	init?: (ctx: PluginContext) => void;
 	beforeStarting?: (input: StartingInput, ctx: PluginContext) => void;
 	afterStarting?: (input: StartingInput, ctx: PluginContext) => void;
 	beforeReady?: (input: ReadyInput, ctx: PluginContext) => void;

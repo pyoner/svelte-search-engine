@@ -1,8 +1,14 @@
 import type { Gname } from '$lib/types/base';
 import type { Promotion, Result, SearchCallback, SearchType } from '$lib/types/search';
 import { registry } from './registry';
-import type { PluginContext, PluginManager } from './plugin';
-import { starting, ready, rendered } from './store';
+import {
+	createPluginContext,
+	createPluginManager,
+	type Plugin,
+	type PluginContext,
+	type PluginManager
+} from './plugin';
+import { init, starting, ready, rendered } from './store';
 
 export type StartingInput = {
 	type: SearchType;
@@ -51,6 +57,36 @@ export function createCallbacks(
 			pluginManager.runBeforeRendered(input, pluginCtx);
 			rendered.set(input);
 			pluginManager.runAfterRendered(input, pluginCtx);
+		}
+	};
+}
+
+export function createCSECallbacks(
+	plugins: Plugin<unknown>[],
+	onInit: () => void
+): {
+	initializationCallback: () => void;
+	searchCallbacks: {
+		image: SearchCallback;
+		web: SearchCallback;
+	};
+	destroy: () => void;
+} {
+	const pluginCtx = createPluginContext();
+	const pluginManager = createPluginManager(plugins);
+
+	return {
+		initializationCallback: () => {
+			pluginManager.init(pluginCtx);
+			init.set(true);
+			onInit();
+		},
+		searchCallbacks: {
+			image: createCallbacks('image', pluginCtx, pluginManager),
+			web: createCallbacks('web', pluginCtx, pluginManager)
+		},
+		destroy() {
+			pluginManager.destroy(pluginCtx);
 		}
 	};
 }

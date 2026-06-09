@@ -289,16 +289,56 @@ rendered.subscribe((value) => console.log('Search results rendered:', value));
 
 ## Custom Results Component
 
-You can create a custom results component to display search results:
+You can create a custom results component to display search results. Use the `SearchEngineComponentProps` type for full TypeScript support:
 
 ```svelte
 <script lang="ts">
-  import type { Promotion, Result } from 'svelte-search-engine';
+  import type { SearchEngineComponentProps } from 'svelte-search-engine';
 
-  let { promos, results }: { promos?: Promotion[]; results: Result[] } = $props();
+  let { gname, type, promos, results }: SearchEngineComponentProps = $props();
 </script>
 
 <!-- Your custom results layout here -->
+```
+
+The `SearchEngineComponentProps` type includes:
+
+| Prop      | Type          | Description                   |
+| --------- | ------------- | ----------------------------- |
+| `gname`   | `Gname`       | The search element identifier |
+| `type`    | `SearchType`  | `'web'` or `'image'`          |
+| `promos`  | `Promotion[]` | Optional promotional results  |
+| `results` | `Result[]`    | Search results                |
+
+### Conditional Rendering by Search Type
+
+Your custom component can render different layouts for web and image search:
+
+```svelte
+<script lang="ts">
+  import type { SearchEngineComponentProps } from 'svelte-search-engine';
+
+  let { type, results }: SearchEngineComponentProps = $props();
+</script>
+
+{#if type === 'image'}
+  <!-- Image search results layout -->
+  <div class="image-grid">
+    {#each results as result}
+      <img src={result.image?.url} alt={result.title} />
+    {/each}
+  </div>
+{:else}
+  <!-- Web search results layout -->
+  <ul>
+    {#each results as result}
+      <li>
+        <a href={result.url}>{result.title}</a>
+        <p>{result.content}</p>
+      </li>
+    {/each}
+  </ul>
+{/if}
 ```
 
 Then use it in the `Search` or `SearchResults` component:
@@ -306,7 +346,7 @@ Then use it in the `Search` or `SearchResults` component:
 ```svelte
 <Search
   attributes={{ gname: 'web' }}
-  components={{ web: YourCustomResultsComponent }}
+  components={{ web: YourCustomResultsComponent, image: YourCustomResultsComponent }}
 />
 ```
 
@@ -329,12 +369,13 @@ usePlugin(thumbnailPlugin);
 `jsonInterceptorPlugin` intercepts the raw CSE JSONP response and stores `tbLargeUrl` / `tbMedUrl` data. `thumbnailPlugin` (which depends on `jsonInterceptorPlugin`) exposes an API to retrieve large/medium thumbnails:
 
 ```svelte
-<script>
+<script lang="ts">
   import { usePlugin, thumbnailPlugin } from 'svelte-search-engine';
+  import type { SearchEngineComponentProps } from 'svelte-search-engine';
 
   const thumb = usePlugin(thumbnailPlugin);
 
-  let { results } = $props();
+  let { type, results }: SearchEngineComponentProps = $props();
 </script>
 
 {#each results as result}
@@ -402,6 +443,36 @@ usePlugin(myPlugin);
 | `destroy`        | When plugin is unregistered                  |
 
 Plugins are executed in dependency order (topological sort). A plugin can declare `dependencies` to ensure it runs after other plugins.
+
+## Exported Types
+
+The library exports the following TypeScript types for building custom components and plugins:
+
+```typescript
+import type {
+	SearchEngineComponentProps,
+	SearchEngineComponent,
+	UIComponents,
+	Gname,
+	SearchType,
+	Promotion,
+	Result,
+	ComponentAttributes,
+	Plugin
+} from 'svelte-search-engine';
+```
+
+| Type                         | Description                                           |
+| ---------------------------- | ----------------------------------------------------- |
+| `SearchEngineComponentProps` | Props type for custom result components               |
+| `SearchEngineComponent`      | Svelte `Component` type for result renderers          |
+| `UIComponents`               | Map of custom components for `web` and `image` search |
+| `Gname`                      | Search element identifier type (aliased `string`)     |
+| `SearchType`                 | Union type: `'web' \| 'image'`                        |
+| `Promotion`                  | Promotion result object type                          |
+| `Result`                     | Search result object type                             |
+| `ComponentAttributes`        | Google CSE component configuration attributes         |
+| `Plugin`                     | Plugin interface for extending the library            |
 
 ## License
 

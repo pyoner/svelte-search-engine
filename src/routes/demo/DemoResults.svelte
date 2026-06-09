@@ -2,7 +2,7 @@
 	import type { SearchEngineComponentProps } from '$lib/types/components';
 	import { usePlugin, thumbnailPlugin } from '$lib';
 
-	let { type, results }: SearchEngineComponentProps = $props();
+	let { results }: SearchEngineComponentProps = $props();
 
 	const thumb = usePlugin(thumbnailPlugin);
 

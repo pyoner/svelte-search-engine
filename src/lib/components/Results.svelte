@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { SearchEngineComponentProps } from '$lib/types/components';
 
-	let { gname, results }: SearchEngineComponentProps = $props();
+	let { gname, type, results }: SearchEngineComponentProps = $props();
 
 	$effect(() => {
 		return () => {
@@ -11,7 +11,7 @@
 </script>
 
 <!-- {promos} -->
-<p>gname: {gname}</p>
+<p>gname: {gname}, type: {type}</p>
 
 <ul>
 	{#each results as result}

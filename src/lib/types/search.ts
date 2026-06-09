@@ -1,5 +1,8 @@
 import type { Gname } from './base';
 
+export const searchType = ['web', 'image'] as const;
+export type SearchType = (typeof searchType)[number];
+
 export type Image = {
 	url: string;
 	height?: number;

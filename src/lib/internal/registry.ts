@@ -1,5 +1,5 @@
 import type { UIComponents } from '$lib/types/components';
-import { searchType, type SearchType } from './store';
+import { searchType, type SearchType } from '$lib/types/search';
 
 class Registry {
 	#registry = new Set<string>();

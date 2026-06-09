@@ -1,6 +1,7 @@
 import { mount } from 'svelte';
 import { writable, type Unsubscriber } from 'svelte/store';
-import type { Promotion, Result, SearchCallback } from '$lib/types/search';
+import type { Promotion, Result, SearchCallback, SearchType } from '$lib/types/search';
+import { searchType } from '$lib/types/search';
 import type {
 	SearchEngineComponent,
 	SearchEngineComponentProps,
@@ -18,9 +19,6 @@ import {
 	runBeforeRenderedHook,
 	runAfterRenderedHook
 } from './plugin';
-
-export const searchType = ['web', 'image'] as const;
-export type SearchType = (typeof searchType)[number];
 
 export type StartingInput = {
 	type: SearchType;
@@ -86,6 +84,7 @@ export function subscribeComponent(gname: string, component: SearchEngineCompone
 			target: input.div,
 			props: {
 				gname: gname,
+				type: input.type,
 				promos: input.promos,
 				results: input.results
 			} satisfies SearchEngineComponentProps

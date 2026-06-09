@@ -3,15 +3,17 @@
 	import type { Snippet } from 'svelte';
 
 	import { createDestroyObserver } from '$lib/internal/destroy';
-	import { init, createCallbacks, pluginCtx } from '$lib/internal/store';
-	import { runInitHooks } from '$lib/internal/plugin';
+	import { init, createCallbacks } from '$lib/internal/store';
+	import { createPluginContext, createPluginManager, type PluginManager } from '$lib/internal/plugin';
 
 	import type { Context } from '$lib/internal/types';
+	import type { Plugin } from '$lib/internal/plugin';
 
 	let {
 		cx,
 		className = '',
 		style = '',
+		plugins = [],
 		children,
 		loading,
 		error
@@ -19,6 +21,7 @@
 		cx: string;
 		className?: string;
 		style?: string;
+		plugins?: Plugin<unknown>[];
 		children?: Snippet;
 		loading?: Snippet;
 		error?: Snippet<[unknown]>;
@@ -28,19 +31,22 @@
 
 	setContext<Context>('gcse', {});
 
+	const pluginCtx = createPluginContext();
+	const pluginManager = createPluginManager(plugins);
+
 	const scriptInitialization = new Promise((resolve, reject) => {
 		onMount(() => {
 			const src = 'https://cse.google.com/cse.js?cx=' + cx;
 			window.__gcse = {
 				parsetags: 'explicit',
-				initializationCallback() {
-					runInitHooks(pluginCtx);
+				async initializationCallback() {
+					await pluginManager.init(pluginCtx);
 					resolve(true);
 					init.set(true);
 				},
 				searchCallbacks: {
-					image: createCallbacks('image'),
-					web: createCallbacks('web')
+					image: createCallbacks('image', pluginCtx, pluginManager),
+					web: createCallbacks('web', pluginCtx, pluginManager)
 				}
 			};
 
@@ -55,7 +61,10 @@
 				subtree: true
 			});
 
-			return () => destroyObserver.disconnect();
+			return () => {
+				pluginManager.destroy(pluginCtx);
+				destroyObserver.disconnect();
+			};
 		});
 	});
 </script>

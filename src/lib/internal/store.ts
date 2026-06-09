@@ -11,15 +11,7 @@ import type {
 
 import { registry } from './registry';
 import { destroyRegistry } from './destroy';
-import {
-	createPluginContext,
-	runBeforeStartingHook,
-	runAfterStartingHook,
-	runBeforeReadyHook,
-	runAfterReadyHook,
-	runBeforeRenderedHook,
-	runAfterRenderedHook
-} from './plugin';
+import type { PluginContext, PluginManager } from './plugin';
 
 export type StartingInput = {
 	type: SearchType;
@@ -49,28 +41,30 @@ export const starting = writable<StartingInput | null>(null);
 export const ready = writable<ReadyInput | null>(null);
 export const rendered = writable<RenderedInput | null>(null);
 
-export const pluginCtx = createPluginContext();
-
-export function createCallbacks(type: SearchType): SearchCallback {
+export function createCallbacks(
+	type: SearchType,
+	pluginCtx: PluginContext,
+	pluginManager: PluginManager
+): SearchCallback {
 	return {
 		starting(gname, query) {
 			const input = { type, gname, query };
-			runBeforeStartingHook(input, pluginCtx);
+			pluginManager.runBeforeStarting(input, pluginCtx);
 			starting.set(input);
-			runAfterStartingHook(input, pluginCtx);
+			pluginManager.runAfterStarting(input, pluginCtx);
 		},
 		ready(gname, query, promos, results, div) {
 			const input = { type, gname, query, promos, results, div };
-			runBeforeReadyHook(input, pluginCtx);
+			pluginManager.runBeforeReady(input, pluginCtx);
 			ready.set(input);
-			runAfterReadyHook(input, pluginCtx);
+			pluginManager.runAfterReady(input, pluginCtx);
 			return registry.has(type, gname) ? true : undefined;
 		},
 		rendered(gname, query, promos, results) {
 			const input = { type, gname, query, promos, results };
-			runBeforeRenderedHook(input, pluginCtx);
+			pluginManager.runBeforeRendered(input, pluginCtx);
 			rendered.set(input);
-			runAfterRenderedHook(input, pluginCtx);
+			pluginManager.runAfterRendered(input, pluginCtx);
 		}
 	};
 }

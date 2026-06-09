@@ -1,15 +1,2 @@
 export type { Plugin, PluginContext } from './types';
-export {
-	usePlugin,
-	getPlugins,
-	clearPlugins,
-	createPluginContext,
-	runInitHooks,
-	runBeforeStartingHook,
-	runAfterStartingHook,
-	runBeforeReadyHook,
-	runAfterReadyHook,
-	runBeforeRenderedHook,
-	runAfterRenderedHook,
-	runDestroyHooks
-} from './registry';
+export { createPluginManager, createPluginContext, type PluginManager } from './registry';

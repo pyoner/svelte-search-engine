@@ -1,37 +1,63 @@
 import type { Plugin, PluginContext } from './types';
 import type { StartingInput, ReadyInput, RenderedInput } from '../store';
 
-const plugins: Plugin<unknown>[] = [];
-let initialized = false;
-let initCtx: PluginContext | null = null;
-
-export function usePlugin<TApi>(plugin: Plugin<TApi>): TApi | undefined {
-	plugins.push(plugin);
-
-	// If the system is already initialized, immediately run this plugin's init hook.
-	// This handles plugins registered after Engine has mounted (e.g. in page components).
-	if (initialized && initCtx && plugin.init) {
-		Promise.resolve(plugin.init(initCtx)).catch((e) => {
-			console.warn(`[Plugin] init failed for ${plugin.name}:`, e);
-		});
-	}
-	return plugin.api;
+export interface PluginManager {
+	init(ctx: PluginContext): Promise<void>;
+	runBeforeStarting(input: StartingInput, ctx: PluginContext): void;
+	runAfterStarting(input: StartingInput, ctx: PluginContext): void;
+	runBeforeReady(input: ReadyInput, ctx: PluginContext): void;
+	runAfterReady(input: ReadyInput, ctx: PluginContext): void;
+	runBeforeRendered(input: RenderedInput, ctx: PluginContext): void;
+	runAfterRendered(input: RenderedInput, ctx: PluginContext): void;
+	destroy(ctx: PluginContext): void;
 }
 
-export function getPlugins(): Plugin<unknown>[] {
-	return plugins.slice();
-}
-
-export function clearPlugins(ctx?: PluginContext) {
-	if (ctx) {
-		const sorted = topologicalSort(plugins);
-		for (const plugin of sorted) {
-			plugin.destroy?.(ctx);
+export function createPluginManager(plugins: Plugin<unknown>[]): PluginManager {
+	const sorted = topologicalSort(plugins);
+	return {
+		async init(ctx) {
+			for (const plugin of sorted) {
+				if (plugin.init) {
+					await Promise.resolve(plugin.init(ctx));
+				}
+			}
+		},
+		runBeforeStarting(input, ctx) {
+			for (const plugin of sorted) {
+				plugin.beforeStarting?.(input, ctx);
+			}
+		},
+		runAfterStarting(input, ctx) {
+			for (const plugin of sorted) {
+				plugin.afterStarting?.(input, ctx);
+			}
+		},
+		runBeforeReady(input, ctx) {
+			for (const plugin of sorted) {
+				plugin.beforeReady?.(input, ctx);
+			}
+		},
+		runAfterReady(input, ctx) {
+			for (const plugin of sorted) {
+				plugin.afterReady?.(input, ctx);
+			}
+		},
+		runBeforeRendered(input, ctx) {
+			for (const plugin of sorted) {
+				plugin.beforeRendered?.(input, ctx);
+			}
+		},
+		runAfterRendered(input, ctx) {
+			for (const plugin of sorted) {
+				plugin.afterRendered?.(input, ctx);
+			}
+		},
+		destroy(ctx) {
+			for (const plugin of sorted) {
+				plugin.destroy?.(ctx);
+			}
 		}
-	}
-	plugins.length = 0;
-	initialized = false;
-	initCtx = null;
+	};
 }
 
 /**
@@ -69,64 +95,4 @@ function topologicalSort(plugins: Plugin<unknown>[]): Plugin<unknown>[] {
 
 export function createPluginContext(): PluginContext {
 	return {};
-}
-
-export async function runInitHooks(ctx: PluginContext) {
-	initCtx = ctx;
-	initialized = true;
-	const sorted = topologicalSort(plugins);
-	for (const plugin of sorted) {
-		if (plugin.init) {
-			await Promise.resolve(plugin.init(ctx));
-		}
-	}
-}
-
-export function runBeforeStartingHook(input: StartingInput, ctx: PluginContext) {
-	const sorted = topologicalSort(plugins);
-	for (const plugin of sorted) {
-		plugin.beforeStarting?.(input, ctx);
-	}
-}
-
-export function runAfterStartingHook(input: StartingInput, ctx: PluginContext) {
-	const sorted = topologicalSort(plugins);
-	for (const plugin of sorted) {
-		plugin.afterStarting?.(input, ctx);
-	}
-}
-
-export function runBeforeReadyHook(input: ReadyInput, ctx: PluginContext) {
-	const sorted = topologicalSort(plugins);
-	for (const plugin of sorted) {
-		plugin.beforeReady?.(input, ctx);
-	}
-}
-
-export function runAfterReadyHook(input: ReadyInput, ctx: PluginContext) {
-	const sorted = topologicalSort(plugins);
-	for (const plugin of sorted) {
-		plugin.afterReady?.(input, ctx);
-	}
-}
-
-export function runBeforeRenderedHook(input: RenderedInput, ctx: PluginContext) {
-	const sorted = topologicalSort(plugins);
-	for (const plugin of sorted) {
-		plugin.beforeRendered?.(input, ctx);
-	}
-}
-
-export function runAfterRenderedHook(input: RenderedInput, ctx: PluginContext) {
-	const sorted = topologicalSort(plugins);
-	for (const plugin of sorted) {
-		plugin.afterRendered?.(input, ctx);
-	}
-}
-
-export function runDestroyHooks(ctx: PluginContext) {
-	const sorted = topologicalSort(plugins);
-	for (const plugin of sorted) {
-		plugin.destroy?.(ctx);
-	}
 }

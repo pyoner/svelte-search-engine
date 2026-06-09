@@ -25,7 +25,7 @@ export {
 export { searchElementApi } from './internal/api';
 
 // export plugin system
-export { usePlugin } from './internal/plugin';
+export type { Plugin, PluginContext } from './internal/plugin';
 
 // export built-in plugins
 export { jsonInterceptorPlugin } from './plugins/json-interceptor';

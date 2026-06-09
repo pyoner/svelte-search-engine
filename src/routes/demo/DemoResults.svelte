@@ -1,10 +1,8 @@
 <script lang="ts">
 	import type { SearchEngineComponentProps } from '$lib/types/components';
-	import { usePlugin, thumbnailPlugin } from '$lib';
+	import { thumbnailPlugin } from '$lib';
 
 	let { results }: SearchEngineComponentProps = $props();
-
-	const thumb = usePlugin(thumbnailPlugin);
 
 	$effect(() => {
 		// Dump the results array to the console for inspection
@@ -14,8 +12,8 @@
 
 <ul class="results">
 	{#each results as result}
-		{@const medium = thumb?.getMedium(result)}
-		{@const large = thumb?.getLarge(result)}
+	{@const medium = thumbnailPlugin.api?.getMedium(result)}
+	{@const large = thumbnailPlugin.api?.getLarge(result)}
 		<li>
 			<a href={result.url} target="_blank" rel="noopener">
 				{result.visibleUrl}

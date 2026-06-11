@@ -1,6 +1,7 @@
 import type { PluginBase } from '../internal/plugin';
 import { getJson } from './json-interceptor';
-import type { Result, Image } from '../types/search';
+import type { Result, Image, SearchType } from '../types/search';
+import type { Gname } from '$lib/types/base';
 
 export interface ThumbnailEntry {
 	large?: string;
@@ -23,8 +24,8 @@ class ThumbnailPlugin implements PluginBase {
 		this.#map.clear();
 	}
 
-	getLarge(result: Result): Image | undefined {
-		const extra = this.#lookupEntry(result);
+	getLarge(gname: Gname, type: SearchType, result: Result): Image | undefined {
+		const extra = this.#lookupEntry(gname, type, result);
 		if (!extra?.large) return undefined;
 		const large: Image = { url: extra.large };
 		if (extra.largeHeight !== undefined) large.height = extra.largeHeight;
@@ -32,8 +33,8 @@ class ThumbnailPlugin implements PluginBase {
 		return large;
 	}
 
-	getMedium(result: Result): Image | undefined {
-		const extra = this.#lookupEntry(result);
+	getMedium(gname: Gname, type: SearchType, result: Result): Image | undefined {
+		const extra = this.#lookupEntry(gname, type, result);
 		if (!extra?.medium) return undefined;
 		const medium: Image = { url: extra.medium };
 		if (extra.mediumHeight !== undefined) medium.height = extra.mediumHeight;
@@ -48,8 +49,8 @@ class ThumbnailPlugin implements PluginBase {
 		return match?.[1];
 	}
 
-	#lookupEntry(result: Result): ThumbnailEntry | undefined {
-		const json = getJson();
+	#lookupEntry(gname: Gname, type: SearchType, result: Result): ThumbnailEntry | undefined {
+		const json = getJson(gname, type);
 		if (!json || !Array.isArray(json.results)) return undefined;
 
 		const id = this.#extractImageId(result);
@@ -74,17 +75,10 @@ class ThumbnailPlugin implements PluginBase {
 
 export const thumbnailPlugin = new ThumbnailPlugin();
 
-export function getThumbnail(): ThumbnailApi {
-	return {
-		getLarge: (result: Result) => thumbnailPlugin.getLarge(result),
-		getMedium: (result: Result) => thumbnailPlugin.getMedium(result)
-	};
+export function getLargeThumbnail(gname: Gname, type: SearchType, result: Result) {
+	return thumbnailPlugin.getLarge(gname, type, result);
 }
 
-export function getLargeThumbnailUrl(result: Result): string | undefined {
-	return thumbnailPlugin.getLarge(result)?.url;
-}
-
-export function getMediumThumbnailUrl(result: Result): string | undefined {
-	return thumbnailPlugin.getMedium(result)?.url;
+export function getMediumThumbnail(gname: Gname, type: SearchType, result: Result) {
+	return thumbnailPlugin.getMedium(gname, type, result);
 }

@@ -12,7 +12,7 @@
 
 <Search
 	attributes={{
-		gname: 'image',
+		gname: 'xxx',
 		enableImageSearch: true,
 		disableWebSearch: true
 	}}

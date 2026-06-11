@@ -1,10 +1,9 @@
 <script lang="ts">
 	import type { SearchEngineComponentProps } from '$lib/types/components';
-	import { getThumbnail } from '$lib';
+	import { getLargeThumbnail, getMediumThumbnail, } from '$lib';
 
-	let { results }: SearchEngineComponentProps = $props();
+	let { gname, type, results }: SearchEngineComponentProps = $props();
 
-	const { getMedium, getLarge } = getThumbnail();
 
 	$effect(() => {
 		// Dump the results array to the console for inspection
@@ -14,8 +13,8 @@
 
 <ul class="results">
 	{#each results as result}
-	{@const medium = getMedium(result)}
-	{@const large = getLarge(result)}
+	{@const medium = getMediumThumbnail(gname, type, result)}
+	{@const large = getLargeThumbnail(gname, type, result)}
 		<li>
 			<a href={result.url} target="_blank" rel="noopener">
 				{result.visibleUrl}

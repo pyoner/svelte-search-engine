@@ -1,3 +1,6 @@
+import type { RenderedInput, StartingInput } from '$lib/internal/types';
+import type { Gname } from '$lib/types/base';
+import type { SearchType } from '$lib/types/search';
 import type { PluginBase } from '../internal/plugin';
 
 interface CsePayload {
@@ -22,7 +25,8 @@ export interface ThumbnailEntry {
 }
 
 class JsonInterceptorPlugin implements PluginBase {
-	#json: CsePayload | null = null;
+	#json: Map<string, CsePayload> = new Map();
+	#key: string | null = null;
 
 	init() {
 		if (typeof window === 'undefined') return;
@@ -37,13 +41,16 @@ class JsonInterceptorPlugin implements PluginBase {
 			const handler: ProxyHandler<Record<string, unknown>> = {
 				set: (target, prop: string | symbol, value: unknown) => {
 					if (typeof prop === 'string' && prop.startsWith('api') && typeof value === 'function') {
+						console.log('jsonp callback', prop);
+						const key = this.#key;
+						console.log('key', key);
 						const original = value as (...args: unknown[]) => unknown;
 						target[prop] = (...args: unknown[]) => {
 							console.log('[CSE JSONP]', prop, args);
 							try {
 								const payload = args[0] as CsePayload | undefined;
-								if (payload) {
-									this.#json = payload;
+								if (payload && key) {
+									this.#json.set(key, payload);
 								}
 							} catch (e) {
 								console.warn('[CSE JSONP] failed to parse payload', e);
@@ -64,17 +71,32 @@ class JsonInterceptorPlugin implements PluginBase {
 		}, 50);
 	}
 
-	beforeStarting() {
-		this.#json = null;
+	private createKey(gname: Gname, type: SearchType): string {
+		return `${gname}:${type}`;
 	}
 
-	getJson(): CsePayload | null {
-		return this.#json;
+	beforeStarting(input: StartingInput) {
+		this.#key = this.createKey(input.gname, input.type);
+		console.log('beforeStarting', input);
+	}
+
+	afterRendered(input: RenderedInput): void {
+		if (this.#key) {
+			this.#json.delete(this.#key);
+			this.#key = null;
+		}
+		console.log('afterRendered', input);
+		console.log('clear');
+	}
+
+	getJson(gname: Gname, type: SearchType): CsePayload | undefined {
+		console.log('getJson', gname, type);
+		return this.#json.get(this.createKey(gname, type));
 	}
 }
 
 export const jsonInterceptorPlugin = new JsonInterceptorPlugin();
 
-export function getJson(): CsePayload | null {
-	return jsonInterceptorPlugin.getJson();
+export function getJson(gname: Gname, type: SearchType): CsePayload | undefined {
+	return jsonInterceptorPlugin.getJson(gname, type);
 }

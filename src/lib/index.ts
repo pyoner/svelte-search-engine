@@ -25,8 +25,11 @@ export {
 export { searchElementApi } from './internal/api';
 
 // export plugin system
-export type { Plugin, PluginContext } from './internal/plugin';
-
-// export built-in plugins
+export type { PluginBase } from './internal/plugin';
 export { jsonInterceptorPlugin } from './plugins/json-interceptor';
-export { thumbnailPlugin, getLargeThumbnailUrl, getMediumThumbnailUrl } from './plugins/thumbnail';
+export {
+	thumbnailPlugin,
+	getThumbnail,
+	getLargeThumbnailUrl,
+	getMediumThumbnailUrl
+} from './plugins/thumbnail';

@@ -352,34 +352,30 @@ Then use it in the `Search` or `SearchResults` component:
 
 ## Plugin System
 
-The library supports an extensible plugin architecture with lifecycle hooks that let you intercept and transform search data without mutating the core `Result` type.
+The library uses a class-based plugin system with lifecycle hooks. Pass plugins to the `Engine` component.
 
 ### Built-in Plugins
 
 Two plugins are included for extracting large thumbnails from image search results:
 
 ```typescript
-import { usePlugin, jsonInterceptorPlugin, thumbnailPlugin } from 'svelte-search-engine';
-
-// Register before mounting Engine
-usePlugin(jsonInterceptorPlugin);
-usePlugin(thumbnailPlugin);
+import { getThumbnail, getLargeThumbnailUrl, getMediumThumbnailUrl } from 'svelte-search-engine';
 ```
 
-`jsonInterceptorPlugin` intercepts the raw CSE JSONP response and stores `tbLargeUrl` / `tbMedUrl` data. `thumbnailPlugin` (which depends on `jsonInterceptorPlugin`) exposes an API to retrieve large/medium thumbnails:
+`getThumbnail` returns an API object with methods to retrieve large/medium thumbnails:
 
 ```svelte
 <script lang="ts">
-  import { usePlugin, thumbnailPlugin } from 'svelte-search-engine';
+  import { getThumbnail } from 'svelte-search-engine';
   import type { SearchEngineComponentProps } from 'svelte-search-engine';
 
-  const thumb = usePlugin(thumbnailPlugin);
+  const { getLarge, getMedium } = getThumbnail();
 
   let { type, results }: SearchEngineComponentProps = $props();
 </script>
 
 {#each results as result}
-  {@const large = thumb?.getLarge(result)}
+  {@const large = getLarge(result)}
   {#if large}
     <img src={large.url} alt={result.title} />
   {/if}
@@ -388,45 +384,42 @@ usePlugin(thumbnailPlugin);
 
 ### Writing a Custom Plugin
 
-A plugin implements the `Plugin` interface with optional lifecycle hooks:
+A plugin implements `PluginBase` with optional lifecycle hooks:
 
 ```typescript
-import type { Plugin } from 'svelte-search-engine';
+import type { PluginBase } from 'svelte-search-engine';
 
-export const myPlugin: Plugin<{ log: () => void }> = {
-	name: 'my-plugin',
-	dependencies: ['json-interceptor'], // optional
-	init(ctx) {
+class MyPlugin implements PluginBase {
+	init() {
 		// Runs once after CSE script loads
-		ctx.myPluginState = {};
-	},
-	beforeStarting(input, ctx) {
-		// Runs before each search starts
-	},
-	beforeReady(input, ctx) {
-		// Runs when results are ready, before they are passed to components
-	},
-	afterReady(input, ctx) {
-		// Runs after results are passed to stores
-	},
-	destroy(ctx) {
-		// Cleanup when plugin is unregistered
-		delete ctx.myPluginState;
-	},
-	api: {
-		log() {
-			console.log('Hello from my plugin');
-		}
 	}
-};
+
+	beforeStarting() {
+		// Runs before each search starts
+	}
+
+	beforeReady() {
+		// Runs when results are ready, before they are passed to components
+	}
+
+	afterReady() {
+		// Runs after results are passed to stores
+	}
+
+	destroy() {
+		// Cleanup
+	}
+}
+
+export const myPlugin = new MyPlugin();
 ```
 
-Register it:
+To use the plugin, pass it to the `Engine` component:
 
-```typescript
-import { usePlugin } from 'svelte-search-engine';
-
-usePlugin(myPlugin);
+```svelte
+<Engine cx={PUBLIC_CSE_CX} plugins={[myPlugin]}>
+  <Search ... />
+</Engine>
 ```
 
 ### Lifecycle Hooks
@@ -440,9 +433,9 @@ usePlugin(myPlugin);
 | `afterReady`     | After stores update                          |
 | `beforeRendered` | Before rendered callback                     |
 | `afterRendered`  | After rendered callback                      |
-| `destroy`        | When plugin is unregistered                  |
+| `destroy`        | When Engine is destroyed                     |
 
-Plugins are executed in dependency order (topological sort). A plugin can declare `dependencies` to ensure it runs after other plugins.
+Plugins are executed in the order they are imported.
 
 ## Exported Types
 
@@ -458,7 +451,7 @@ import type {
 	Promotion,
 	Result,
 	ComponentAttributes,
-	Plugin
+	PluginBase
 } from 'svelte-search-engine';
 ```
 
@@ -472,7 +465,7 @@ import type {
 | `Promotion`                  | Promotion result object type                          |
 | `Result`                     | Search result object type                             |
 | `ComponentAttributes`        | Google CSE component configuration attributes         |
-| `Plugin`                     | Plugin interface for extending the library            |
+| `PluginBase`                 | Plugin interface for extending the library            |
 
 ## License
 

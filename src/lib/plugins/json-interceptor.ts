@@ -1,4 +1,4 @@
-import type { Plugin } from '../internal/plugin/types';
+import type { PluginBase } from '../internal/plugin';
 
 interface CsePayload {
 	results?: Array<{
@@ -21,11 +21,11 @@ export interface ThumbnailEntry {
 	mediumWidth?: number;
 }
 
-export const jsonInterceptorPlugin: Plugin = {
-	name: 'json-interceptor',
-	init(ctx) {
+class JsonInterceptorPlugin implements PluginBase {
+	#json: CsePayload | null = null;
+
+	init() {
 		if (typeof window === 'undefined') return;
-		ctx.thumbnailMap = new Map<string, ThumbnailEntry>();
 
 		const interval = setInterval(() => {
 			const googleObj = window.google as unknown as Record<string, unknown> | undefined;
@@ -35,27 +35,15 @@ export const jsonInterceptorPlugin: Plugin = {
 			clearInterval(interval);
 
 			const handler: ProxyHandler<Record<string, unknown>> = {
-				set(target, prop: string | symbol, value: unknown) {
+				set: (target, prop: string | symbol, value: unknown) => {
 					if (typeof prop === 'string' && prop.startsWith('api') && typeof value === 'function') {
 						const original = value as (...args: unknown[]) => unknown;
 						target[prop] = (...args: unknown[]) => {
 							console.log('[CSE JSONP]', prop, args);
 							try {
 								const payload = args[0] as CsePayload | undefined;
-								if (payload && Array.isArray(payload.results)) {
-									const map = ctx.thumbnailMap as Map<string, ThumbnailEntry>;
-									for (const r of payload.results) {
-										const id = r.imageId;
-										if (!id) continue;
-										map.set(id, {
-											large: r.tbLargeUrl,
-											medium: r.tbMedUrl,
-											largeHeight: Number(r.tbLargeHeight) || undefined,
-											largeWidth: Number(r.tbLargeWidth) || undefined,
-											mediumHeight: Number(r.tbMedHeight) || undefined,
-											mediumWidth: Number(r.tbMedWidth) || undefined
-										});
-									}
+								if (payload) {
+									this.#json = payload;
 								}
 							} catch (e) {
 								console.warn('[CSE JSONP] failed to parse payload', e);
@@ -75,4 +63,18 @@ export const jsonInterceptorPlugin: Plugin = {
 			}
 		}, 50);
 	}
-};
+
+	beforeStarting() {
+		this.#json = null;
+	}
+
+	getJson(): CsePayload | null {
+		return this.#json;
+	}
+}
+
+export const jsonInterceptorPlugin = new JsonInterceptorPlugin();
+
+export function getJson(): CsePayload | null {
+	return jsonInterceptorPlugin.getJson();
+}

@@ -1,46 +1,42 @@
 import type { SearchCallback, SearchType } from '$lib/types/search';
 import { registry } from './registry';
 import {
-	createPluginContext,
-	createPluginManager,
-	type Plugin,
-	type PluginContext,
-	type PluginManager
+	initAll,
+	beforeStartingAll,
+	afterStartingAll,
+	beforeReadyAll,
+	afterReadyAll,
+	beforeRenderedAll,
+	afterRenderedAll,
+	destroyAll
 } from './plugin';
 import { init, starting, ready, rendered } from './store';
 
-export function createCallbacks(
-	type: SearchType,
-	pluginCtx: PluginContext,
-	pluginManager: PluginManager
-): SearchCallback {
+export function createCallbacks(type: SearchType): SearchCallback {
 	return {
 		starting(gname, query) {
 			const input = { type, gname, query };
-			pluginManager.runBeforeStarting(input, pluginCtx);
+			beforeStartingAll(input);
 			starting.set(input);
-			pluginManager.runAfterStarting(input, pluginCtx);
+			afterStartingAll(input);
 		},
 		ready(gname, query, promos, results, div) {
 			const input = { type, gname, query, promos, results, div };
-			pluginManager.runBeforeReady(input, pluginCtx);
+			beforeReadyAll(input);
 			ready.set(input);
-			pluginManager.runAfterReady(input, pluginCtx);
+			afterReadyAll(input);
 			return registry.has(type, gname) ? true : undefined;
 		},
 		rendered(gname, query, promos, results) {
 			const input = { type, gname, query, promos, results };
-			pluginManager.runBeforeRendered(input, pluginCtx);
+			beforeRenderedAll(input);
 			rendered.set(input);
-			pluginManager.runAfterRendered(input, pluginCtx);
+			afterRenderedAll(input);
 		}
 	};
 }
 
-export function createCSECallbacks(
-	plugins: Plugin<unknown>[],
-	onInit: () => void
-): {
+export function createCSECallbacks(onInit: () => void): {
 	initializationCallback: () => void;
 	searchCallbacks: {
 		image: SearchCallback;
@@ -48,21 +44,18 @@ export function createCSECallbacks(
 	};
 	destroy: () => void;
 } {
-	const pluginCtx = createPluginContext();
-	const pluginManager = createPluginManager(plugins);
-
 	return {
 		initializationCallback: () => {
-			pluginManager.init(pluginCtx);
+			initAll();
 			init.set(true);
 			onInit();
 		},
 		searchCallbacks: {
-			image: createCallbacks('image', pluginCtx, pluginManager),
-			web: createCallbacks('web', pluginCtx, pluginManager)
+			image: createCallbacks('image'),
+			web: createCallbacks('web')
 		},
 		destroy() {
-			pluginManager.destroy(pluginCtx);
+			destroyAll();
 		}
 	};
 }

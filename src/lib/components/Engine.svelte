@@ -4,9 +4,10 @@
 
 	import { createDestroyObserver } from '$lib/internal/destroy';
 	import { createCSECallbacks } from '$lib/internal/callbacks';
+	import { registerPlugins } from '$lib/internal/plugin';
+	import type { PluginBase } from '$lib/internal/plugin';
 
 	import type { Context } from '$lib/internal/types';
-	import type { Plugin } from '$lib/internal/plugin';
 
 	let {
 		cx,
@@ -20,7 +21,7 @@
 		cx: string;
 		className?: string;
 		style?: string;
-		plugins?: Plugin<unknown>[];
+		plugins?: PluginBase[];
 		children?: Snippet;
 		loading?: Snippet;
 		error?: Snippet<[unknown]>;
@@ -32,10 +33,12 @@
 
 	const scriptInitialization = new Promise((resolve, reject) => {
 		onMount(() => {
+			registerPlugins(plugins);
+
 			const src = 'https://cse.google.com/cse.js?cx=' + cx;
-		const cseCallbacks = createCSECallbacks(plugins, () => {
-			resolve(true);
-		});
+    		const cseCallbacks = createCSECallbacks(() => {
+     			resolve(true);
+    		});
 
 			window.__gcse = {
 				parsetags: 'explicit',

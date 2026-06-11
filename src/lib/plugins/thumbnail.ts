@@ -1,5 +1,6 @@
+import type { PluginBase } from '../internal/plugin';
+import { getJson } from './json-interceptor';
 import type { Result, Image } from '../types/search';
-import type { Plugin, PluginContext } from '../internal/plugin/types';
 
 export interface ThumbnailEntry {
 	large?: string;
@@ -11,75 +12,79 @@ export interface ThumbnailEntry {
 }
 
 export interface ThumbnailApi {
-	getLarge(result: Result): Image | undefined;
-	getMedium(result: Result): Image | undefined;
-	clear(): void;
+	getLarge: (result: Result) => Image | undefined;
+	getMedium: (result: Result) => Image | undefined;
 }
 
-let pluginCtx: PluginContext | null = null;
+class ThumbnailPlugin implements PluginBase {
+	#map = new Map<string, ThumbnailEntry>();
 
-function getMap(): Map<string, ThumbnailEntry> | undefined {
-	if (!pluginCtx) return undefined;
-	return pluginCtx.thumbnailMap as Map<string, ThumbnailEntry> | undefined;
-}
-
-function extractImageId(result: Result): string | undefined {
-	const url = result.thumbnailImage?.url;
-	if (!url) return undefined;
-	const match = url.match(/[?&]q=tbn:([^&]+)/);
-	return match?.[1];
-}
-
-function lookupEntry(result: Result): ThumbnailEntry | undefined {
-	if (!pluginCtx) return undefined;
-	const map = pluginCtx.thumbnailMap as Map<string, ThumbnailEntry> | undefined;
-	if (!map) return undefined;
-	const id = extractImageId(result);
-	if (!id) return undefined;
-	return map.get(id);
-}
-
-export const thumbnailPlugin: Plugin<ThumbnailApi> = {
-	name: 'thumbnail',
-	dependencies: ['json-interceptor'],
-	init(ctx) {
-		pluginCtx = ctx;
-	},
 	beforeStarting() {
-		getMap()?.clear();
-	},
-	destroy() {
-		getMap()?.clear();
-		pluginCtx = null;
-	},
-	api: {
-		getLarge(result) {
-			const extra = lookupEntry(result);
-			if (!extra?.large) return undefined;
-			const large: Image = { url: extra.large };
-			if (extra.largeHeight !== undefined) large.height = extra.largeHeight;
-			if (extra.largeWidth !== undefined) large.width = extra.largeWidth;
-			return large;
-		},
-		getMedium(result) {
-			const extra = lookupEntry(result);
-			if (!extra?.medium) return undefined;
-			const medium: Image = { url: extra.medium };
-			if (extra.mediumHeight !== undefined) medium.height = extra.mediumHeight;
-			if (extra.mediumWidth !== undefined) medium.width = extra.mediumWidth;
-			return medium;
-		},
-		clear() {
-			getMap()?.clear();
-		}
+		this.#map.clear();
 	}
-};
 
-// Convenience wrappers that delegate to the plugin API
+	getLarge(result: Result): Image | undefined {
+		const extra = this.#lookupEntry(result);
+		if (!extra?.large) return undefined;
+		const large: Image = { url: extra.large };
+		if (extra.largeHeight !== undefined) large.height = extra.largeHeight;
+		if (extra.largeWidth !== undefined) large.width = extra.largeWidth;
+		return large;
+	}
+
+	getMedium(result: Result): Image | undefined {
+		const extra = this.#lookupEntry(result);
+		if (!extra?.medium) return undefined;
+		const medium: Image = { url: extra.medium };
+		if (extra.mediumHeight !== undefined) medium.height = extra.mediumHeight;
+		if (extra.mediumWidth !== undefined) medium.width = extra.mediumWidth;
+		return medium;
+	}
+
+	#extractImageId(result: Result): string | undefined {
+		const url = result.thumbnailImage?.url;
+		if (!url) return undefined;
+		const match = url.match(/[?&]q=tbn:([^&]+)/);
+		return match?.[1];
+	}
+
+	#lookupEntry(result: Result): ThumbnailEntry | undefined {
+		const json = getJson();
+		if (!json || !Array.isArray(json.results)) return undefined;
+
+		const id = this.#extractImageId(result);
+		if (!id) return undefined;
+
+		// Find the result in the JSON that matches this imageId
+		for (const r of json.results) {
+			if (r.imageId === id) {
+				return {
+					large: r.tbLargeUrl,
+					medium: r.tbMedUrl,
+					largeHeight: Number(r.tbLargeHeight) || undefined,
+					largeWidth: Number(r.tbLargeWidth) || undefined,
+					mediumHeight: Number(r.tbMedHeight) || undefined,
+					mediumWidth: Number(r.tbMedWidth) || undefined
+				};
+			}
+		}
+		return undefined;
+	}
+}
+
+export const thumbnailPlugin = new ThumbnailPlugin();
+
+export function getThumbnail(): ThumbnailApi {
+	return {
+		getLarge: (result: Result) => thumbnailPlugin.getLarge(result),
+		getMedium: (result: Result) => thumbnailPlugin.getMedium(result)
+	};
+}
+
 export function getLargeThumbnailUrl(result: Result): string | undefined {
-	return thumbnailPlugin.api?.getLarge(result)?.url;
+	return thumbnailPlugin.getLarge(result)?.url;
 }
 
 export function getMediumThumbnailUrl(result: Result): string | undefined {
-	return thumbnailPlugin.api?.getMedium(result)?.url;
+	return thumbnailPlugin.getMedium(result)?.url;
 }

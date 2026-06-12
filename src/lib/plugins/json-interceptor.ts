@@ -1,74 +1,93 @@
-import type { RenderedInput, StartingInput } from '$lib/internal/types';
+import { searchApi, searchCSEApi } from '$lib/internal/api';
+import type { StartingInput } from '$lib/internal/types';
 import type { Gname } from '$lib/types/base';
 import type { SearchType } from '$lib/types/search';
+import type { CseElement } from '$lib/types/google';
 import type { PluginBase } from '../internal/plugin';
 
-interface CsePayload {
-	results?: Array<{
-		imageId?: string;
-		tbLargeUrl?: string;
-		tbMedUrl?: string;
-		tbLargeHeight?: string | number;
-		tbLargeWidth?: string | number;
-		tbMedHeight?: string | number;
-		tbMedWidth?: string | number;
-	}>;
+interface CseCursor {
+	currentPageIndex: number;
+	estimatedResultCount: string;
+	moreResultsUrl: string;
+	resultCount: string;
+	searchResultTime: string;
+	pages: Array<{ label: number; start: string }>;
 }
 
-export interface ThumbnailEntry {
-	large?: string;
-	medium?: string;
-	largeHeight?: number;
-	largeWidth?: number;
-	mediumHeight?: number;
-	mediumWidth?: number;
+interface CseContext {
+	title: string;
+	total_results: string;
+	display_facets: unknown[];
 }
+
+interface CseResult {
+	content: string;
+	contentNoFormatting: string;
+	title: string;
+	titleNoFormatting: string;
+	unescapedUrl: string;
+	url: string;
+	visibleUrl: string;
+	originalContextUrl: string;
+	height: string;
+	width: string;
+	tbUrl: string;
+	tbMedUrl: string;
+	tbLargeUrl: string;
+	tbHeight: string;
+	tbMedHeight: string;
+	tbLargeHeight: string;
+	tbWidth: string;
+	tbMedWidth: string;
+	tbLargeWidth: string;
+	imageId: string;
+	breadcrumbUrl: { crumbs: string[] };
+	fileFormat: string;
+	target: string;
+	html: Record<string, unknown>;
+}
+
+export interface CsePayload {
+	cursor?: CseCursor;
+	context?: CseContext;
+	results?: CseResult[];
+}
+
+type CseApiMenthodName = `api${string}`;
+type CseApiMethod = (payload: CsePayload) => void;
+
+type CseTarget = {
+	element: CseElement;
+	[key: CseApiMenthodName]: CseApiMethod | undefined;
+};
 
 class JsonInterceptorPlugin implements PluginBase {
-	#json: Map<string, CsePayload> = new Map();
+	#json = new Map<string, CsePayload>();
 	#key: string | null = null;
 
 	init() {
-		if (typeof window === 'undefined') return;
+		const search = searchApi();
+		const cse = searchCSEApi();
 
-		const interval = setInterval(() => {
-			const googleObj = window.google as unknown as Record<string, unknown> | undefined;
-			const searchObj = googleObj?.search as Record<string, unknown> | undefined;
-			const cse = searchObj?.cse as Record<string, unknown> | undefined;
-			if (!cse) return;
-			clearInterval(interval);
+		const handler: ProxyHandler<CseTarget> = {
+			set: (target, prop, value) => {
+				if (typeof prop === 'string' && prop.startsWith('api')) {
+					const key = this.#key;
+					const original = value as CseApiMethod;
 
-			const handler: ProxyHandler<Record<string, unknown>> = {
-				set: (target, prop: string | symbol, value: unknown) => {
-					if (typeof prop === 'string' && prop.startsWith('api') && typeof value === 'function') {
-						console.log('jsonp callback', prop);
-						const key = this.#key;
-						console.log('key', key);
-						const original = value as (...args: unknown[]) => unknown;
-						target[prop] = (...args: unknown[]) => {
-							console.log('[CSE JSONP]', prop, args);
-							try {
-								const payload = args[0] as CsePayload | undefined;
-								if (payload && key) {
-									this.#json.set(key, payload);
-								}
-							} catch (e) {
-								console.warn('[CSE JSONP] failed to parse payload', e);
-							}
-							return original(...args);
-						};
-						return true;
-					}
-					target[prop as string] = value;
+					target[prop as CseApiMenthodName] = (payload: CsePayload) => {
+						if (key) {
+							this.#json.set(key, payload);
+						}
+						return original(payload);
+					};
 					return true;
 				}
-			};
-
-			const proxy = new Proxy(cse, handler);
-			if (searchObj) {
-				searchObj.cse = proxy;
+				return Reflect.set(target, prop, value);
 			}
-		}, 50);
+		};
+
+		search.cse = new Proxy(cse, handler);
 	}
 
 	private createKey(gname: Gname, type: SearchType): string {
@@ -77,20 +96,16 @@ class JsonInterceptorPlugin implements PluginBase {
 
 	beforeStarting(input: StartingInput) {
 		this.#key = this.createKey(input.gname, input.type);
-		console.log('beforeStarting', input);
 	}
 
-	afterRendered(input: RenderedInput): void {
+	afterRendered(): void {
 		if (this.#key) {
 			this.#json.delete(this.#key);
 			this.#key = null;
 		}
-		console.log('afterRendered', input);
-		console.log('clear');
 	}
 
 	getJson(gname: Gname, type: SearchType): CsePayload | undefined {
-		console.log('getJson', gname, type);
 		return this.#json.get(this.createKey(gname, type));
 	}
 }

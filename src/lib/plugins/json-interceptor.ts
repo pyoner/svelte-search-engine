@@ -20,7 +20,7 @@ interface CseContext {
 	display_facets: unknown[];
 }
 
-interface CseResult {
+export interface CseResult {
 	content: string;
 	contentNoFormatting: string;
 	title: string;

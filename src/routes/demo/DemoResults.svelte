@@ -1,20 +1,12 @@
 <script lang="ts">
 	import type { SearchEngineComponentProps } from '$lib/types/components';
-	import { getLargeThumbnail, getMediumThumbnail, } from '$lib';
+	import type { WithThumbs } from '$lib/plugins/thumbnail';
 
-	let { gname, type, results }: SearchEngineComponentProps = $props();
-
-
-	$effect(() => {
-		// Dump the results array to the console for inspection
-		console.log('[DemoResults] results:', results);
-	});
+	let { results }: WithThumbs<SearchEngineComponentProps> = $props();
 </script>
 
 <ul class="results">
 	{#each results as result}
-	{@const medium = getMediumThumbnail(gname, type, result)}
-	{@const large = getLargeThumbnail(gname, type, result)}
 		<li>
 			<a href={result.url} target="_blank" rel="noopener">
 				{result.visibleUrl}
@@ -31,22 +23,22 @@
 					/>
 				</div>
 
-				{#if medium}
+				{#if result.thumbnailMedium}
 					<div>
-						<strong>Medium ({medium.width ?? '?'}×{medium.height ?? '?'})</strong>
+						<strong>Medium ({result.thumbnailMedium.width ?? '?'}×{result.thumbnailMedium.height ?? '?'})</strong>
 						<img
-							src={medium.url}
+							src={result.thumbnailMedium.url}
 							alt={result.titleNoFormatting}
 							loading="lazy"
 						/>
 					</div>
 				{/if}
 
-				{#if large}
+				{#if result.thumbnailLarge}
 					<div>
-						<strong>Large ({large.width ?? '?'}×{large.height ?? '?'})</strong>
+						<strong>Large ({result.thumbnailLarge.width ?? '?'}×{result.thumbnailLarge.height ?? '?'})</strong>
 						<img
-							src={large.url}
+							src={result.thumbnailLarge.url}
 							alt={result.titleNoFormatting}
 							loading="lazy"
 						/>

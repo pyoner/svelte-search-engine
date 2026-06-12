@@ -356,18 +356,13 @@ The library uses a class-based plugin system with lifecycle hooks. Pass plugins 
 
 ### Built-in Plugins
 
-Two built-in plugins work together to extract larger thumbnails from image search results:
+Two built-in plugins work together to attach larger thumbnail URLs (`thumbnailLarge` / `thumbnailMedium`) onto each `Result` of image search:
 
-1. **`jsonInterceptorPlugin`** – intercepts the raw CSE JSON payload so that extra metadata (large/medium thumbnails) can be read.
-2. **`thumbnailPlugin`** – uses that intercepted payload to extract larger thumbnail URLs.
+1. **`jsonInterceptorPlugin`** – intercepts the raw CSE JSON payload so the extra metadata can be read.
+2. **`thumbnailPlugin`** – in its `beforeReady` hook, matches each result's `imageId` to the intercepted JSON and writes the large/medium thumbnail directly onto the result object.
 
 ```typescript
-import {
-	jsonInterceptorPlugin,
-	thumbnailPlugin,
-	getLargeThumbnail,
-	getMediumThumbnail
-} from 'svelte-search-engine';
+import { jsonInterceptorPlugin, thumbnailPlugin } from 'svelte-search-engine';
 ```
 
 Register both plugins on the `Engine` component:
@@ -382,23 +377,33 @@ Register both plugins on the `Engine` component:
 </Engine>
 ```
 
-Inside your custom results component, use the helper functions to retrieve large or medium thumbnails:
+Inside your custom results component, read the thumbnails directly off each result. The `thumbnailLarge` and `thumbnailMedium` fields are optional and only present when the corresponding sizes are available in the intercepted JSON:
 
 ```svelte
 <script lang="ts">
-  import { getLargeThumbnail, getMediumThumbnail } from 'svelte-search-engine';
   import type { SearchEngineComponentProps } from 'svelte-search-engine';
 
-  let { gname, type, results }: SearchEngineComponentProps = $props();
+  let { results }: SearchEngineComponentProps = $props();
 </script>
 
 {#each results as result}
-  {@const large = getLargeThumbnail(gname, type, result)}
-  {@const medium = getMediumThumbnail(gname, type, result)}
-  {#if large}
-    <img src={large.url} alt={result.title} />
+  {#if result.thumbnailLarge}
+    <img src={result.thumbnailLarge.url} alt={result.title} />
+  {/if}
+  {#if result.thumbnailMedium}
+    <img src={result.thumbnailMedium.url} alt={result.title} />
   {/if}
 {/each}
+```
+
+If you prefer a more explicit prop type, use the `WithThumbs<T>` wrapper. It widens `results` so the augmented fields are guaranteed on the result type:
+
+```svelte
+<script lang="ts">
+  import type { SearchEngineComponentProps, WithThumbs } from 'svelte-search-engine';
+
+  let { results }: WithThumbs<SearchEngineComponentProps> = $props();
+</script>
 ```
 
 ### Writing a Custom Plugin
@@ -475,24 +480,22 @@ import type {
 	Result,
 	ComponentAttributes,
 	PluginBase,
-	ThumbnailApi,
-	ThumbnailEntry
+	WithThumbs
 } from 'svelte-search-engine';
 ```
 
-| Type                         | Description                                                      |
-| ---------------------------- | ---------------------------------------------------------------- |
-| `SearchEngineComponentProps` | Props type for custom result components                          |
-| `SearchEngineComponent`      | Svelte `Component` type for result renderers                     |
-| `UIComponents`               | Map of custom components for `web` and `image` search            |
-| `Gname`                      | Search element identifier type (aliased `string`)                |
-| `SearchType`                 | Union type: `'web' \| 'image'`                                   |
-| `Promotion`                  | Promotion result object type                                     |
-| `Result`                     | Search result object type                                        |
-| `ComponentAttributes`        | Google CSE component configuration attributes                    |
-| `PluginBase`                 | Plugin interface for extending the library                       |
-| `ThumbnailApi`               | API shape for `getLargeThumbnail` / `getMediumThumbnail` helpers |
-| `ThumbnailEntry`             | Large/medium thumbnail metadata object                           |
+| Type                         | Description                                                                                   |
+| ---------------------------- | --------------------------------------------------------------------------------------------- |
+| `SearchEngineComponentProps` | Props type for custom result components                                                       |
+| `SearchEngineComponent`      | Svelte `Component` type for result renderers                                                  |
+| `UIComponents`               | Map of custom components for `web` and `image` search                                         |
+| `Gname`                      | Search element identifier type (aliased `string`)                                             |
+| `SearchType`                 | Union type: `'web' \| 'image'`                                                                |
+| `Promotion`                  | Promotion result object type                                                                  |
+| `Result`                     | Search result object type (includes optional `thumbnailLarge` / `thumbnailMedium`)            |
+| `ComponentAttributes`        | Google CSE component configuration attributes                                                 |
+| `PluginBase`                 | Plugin interface for extending the library                                                    |
+| `WithThumbs<T>`              | Wraps a props type to widen `results` with the thumbnail fields injected by `thumbnailPlugin` |
 
 ## License
 

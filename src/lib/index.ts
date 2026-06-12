@@ -28,3 +28,4 @@ export { searchElementApi } from './internal/api';
 export type { PluginBase } from './internal/plugin';
 export { jsonInterceptorPlugin } from './plugins/json-interceptor';
 export { thumbnailPlugin } from './plugins/thumbnail';
+export type { WithThumbs } from './plugins/thumbnail';

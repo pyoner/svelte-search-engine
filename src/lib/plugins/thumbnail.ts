@@ -43,6 +43,8 @@ function extractImageId(result: Result): string | undefined {
 
 class ThumbnailPlugin implements PluginBase {
 	beforeReady(input: WithThumbs<ReadyInput>) {
+		if (input.type !== 'image') return;
+
 		const json = getJson(input.gname, input.type);
 		if (!json?.results) return;
 

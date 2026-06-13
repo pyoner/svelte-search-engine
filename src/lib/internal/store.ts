@@ -1,7 +1,7 @@
 import { mount } from 'svelte';
 import { writable, type Unsubscriber } from 'svelte/store';
 import type { Gname } from '$lib/types/base';
-import { searchType } from '$lib/types/search';
+import { searchType, type SearchType } from '$lib/types/search';
 import type {
 	SearchEngineComponent,
 	SearchEngineComponentProps,
@@ -16,9 +16,13 @@ export const starting = writable<StartingInput | null>(null);
 export const ready = writable<ReadyInput | null>(null);
 export const rendered = writable<RenderedInput | null>(null);
 
-export function subscribeComponent(gname: Gname, component: SearchEngineComponent) {
+export function subscribeComponent(
+	gname: Gname,
+	type: SearchType,
+	component: SearchEngineComponent
+) {
 	return ready.subscribe((input) => {
-		if (!input) {
+		if (!input || input.gname !== gname || input.type !== type) {
 			return;
 		}
 
@@ -26,7 +30,7 @@ export function subscribeComponent(gname: Gname, component: SearchEngineComponen
 			target: input.div,
 			props: {
 				gname: gname,
-				type: input.type,
+				type,
 				promos: input.promos,
 				results: input.results
 			} satisfies SearchEngineComponentProps
@@ -36,10 +40,10 @@ export function subscribeComponent(gname: Gname, component: SearchEngineComponen
 }
 
 export function subscribeComponents(gname: Gname, components: UIComponents) {
-	const arr = searchType.reduce<Unsubscriber[]>((acc, k) => {
-		const component = components[k];
+	const arr = searchType.reduce<Unsubscriber[]>((acc, type) => {
+		const component = components[type];
 		if (component) {
-			acc.push(subscribeComponent(gname, component));
+			acc.push(subscribeComponent(gname, type, component));
 		}
 		return acc;
 	}, []);

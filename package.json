@@ -1,7 +1,7 @@
 {
 	"name": "svelte-search-engine",
 	"description": "A wrapper for Google's Programmable Search Engine, providing a Svelte-friendly interface.",
-	"version": "1.0.0",
+	"version": "1.1.0-alpha.0",
 	"scripts": {
 		"dev": "vp dev",
 		"build": "vp build && npm run package",
@@ -68,6 +68,9 @@
 		"url": "git+https://github.com/pyoner/svelte-search-engine.git"
 	},
 	"license": "MIT",
+	"publishConfig": {
+		"tag": "alpha"
+	},
 	"packageManager": "bun@1.3.14",
 	"overrides": {
 		"vite": "npm:@voidzero-dev/vite-plus-core@^0.1.23",

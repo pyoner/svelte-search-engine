@@ -1,5 +1,5 @@
 import { readonly } from 'svelte/store';
-import * as internal from './internal/store';
+import * as internal from '../internal/store';
 
 export const init = readonly(internal.init);
 export const starting = readonly(internal.starting);

@@ -1,7 +1,7 @@
 import type { StartingInput, ReadyInput, RenderedInput } from './types';
 import type { SearchType } from '$lib/types/search';
 
-export interface PluginBase<T extends SearchType = SearchType> {
+export interface Plugin<T extends SearchType = SearchType> {
 	type?: T | T[];
 	init?(): void;
 	beforeStarting?(input: StartingInput): void;
@@ -13,24 +13,16 @@ export interface PluginBase<T extends SearchType = SearchType> {
 	destroy?(): void;
 }
 
-export interface WebPlugin extends PluginBase<'web'> {
-	type: 'web';
-}
+export const plugins = new Set<Plugin>();
 
-export interface ImagePlugin extends PluginBase<'image'> {
-	type: 'image';
-}
-
-export const plugins = new Set<PluginBase>();
-
-export function registerPlugins(newPlugins: PluginBase[]) {
+export function registerPlugins(newPlugins: Plugin[]) {
 	plugins.clear();
 	for (const p of newPlugins) {
 		plugins.add(p);
 	}
 }
 
-function matchesType(plugin: PluginBase, type: SearchType): boolean {
+function matchesType(plugin: Plugin, type: SearchType): boolean {
 	if (plugin.type === undefined) return true;
 	if (Array.isArray(plugin.type)) return plugin.type.includes(type);
 	return plugin.type === type;

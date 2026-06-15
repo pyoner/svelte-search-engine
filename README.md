@@ -34,7 +34,7 @@ PUBLIC_CSE_CX=your_cx_id_here
 
 ```svelte
 <script>
-  import { Engine, Search } from 'svelte-search-engine';
+  import { Engine, Search } from 'svelte-search-engine/components';
   import { PUBLIC_CSE_CX } from '$env/static/public';
 </script>
 
@@ -65,6 +65,10 @@ The `Engine` component initializes the Google Custom Search Engine script and pr
 The `Search` component renders a complete search interface, including the search box and results.
 
 ```svelte
+<script>
+  import { Search } from 'svelte-search-engine/components';
+</script>
+
 <Search
   attributes={{
     gname: 'web',
@@ -91,6 +95,10 @@ The `SearchBox` component renders only the search input field.
 The `SearchResults` component renders only the search results.
 
 ```svelte
+<script>
+  import { SearchResults } from 'svelte-search-engine/components';
+</script>
+
 <SearchResults
   attributes={{
     gname: 'mySearchResults'
@@ -104,6 +112,10 @@ The `SearchResults` component renders only the search results.
 The `Results` component is a generic list renderer that automatically picks the right item component based on the search `type`:
 
 ```svelte
+<script>
+  import { Results } from 'svelte-search-engine/components';
+</script>
+
 <SearchResults
   attributes={{ gname: 'web' }}
   components={{ web: Results }}
@@ -116,10 +128,10 @@ For custom layouts you can use the low-level item components directly:
 
 ```svelte
 <script lang="ts">
-  import { WebResult, ImageResult } from 'svelte-search-engine';
-  import type { WebResultType, ImageResultType } from 'svelte-search-engine';
+  import { WebResult, ImageResult } from 'svelte-search-engine/components';
+  import type { WebResult, ImageResult } from 'svelte-search-engine/types';
 
-  let { webResult, imageResult }: { webResult: WebResultType; imageResult: ImageResultType } = $props();
+  let { webResult, imageResult }: { webResult: WebResult; imageResult: ImageResult } = $props();
 </script>
 
 <!-- one web result -->
@@ -129,8 +141,8 @@ For custom layouts you can use the low-level item components directly:
 <ImageResult result={imageResult} />
 ```
 
-`WebResult` accepts a `WebResultType` object and renders a link plus content snippet.
-`ImageResult` accepts an `ImageResultType` object and renders a link to the source page plus the image.
+`WebResult` accepts a `WebResult` object and renders a link plus content snippet.
+`ImageResult` accepts an `ImageResult` object and renders a link to the source page plus the image.
 
 ## Customization
 
@@ -312,7 +324,7 @@ export interface ComponentAttributes {
 The library provides reactive stores for managing search state:
 
 ```typescript
-import { init, starting, ready, rendered } from 'svelte-search-engine';
+import { init, starting, ready, rendered } from 'svelte-search-engine/stores';
 
 init.subscribe((value) => console.log('Initialization state:', value));
 starting.subscribe((value) => console.log('Search starting:', value));
@@ -326,7 +338,7 @@ You can create a custom results component to display search results. Use the gen
 
 ```svelte
 <script lang="ts">
-  import type { SearchEngineComponentProps } from 'svelte-search-engine';
+  import type { SearchEngineComponentProps } from 'svelte-search-engine/types';
 
   let { gname, type, promos, results }: SearchEngineComponentProps<'web'> = $props();
 </script>
@@ -349,7 +361,7 @@ Your custom component can render different layouts for web and image search:
 
 ```svelte
 <script lang="ts">
-  import type { SearchEngineComponentProps } from 'svelte-search-engine';
+  import type { SearchEngineComponentProps } from 'svelte-search-engine/types';
 
   let { type, results }: SearchEngineComponentProps = $props();
 </script>
@@ -395,14 +407,14 @@ Two built-in plugins work together to attach larger thumbnail URLs (`thumbnailLa
 2. **`thumbnailPlugin`** – an `ImagePlugin` with `type: 'image'`. In its `beforeReady` hook, it matches each result's `imageId` to the intercepted JSON and writes the large/medium thumbnail directly onto the result object.
 
 ```typescript
-import { jsonInterceptorPlugin, thumbnailPlugin } from 'svelte-search-engine';
+import { jsonInterceptorPlugin, thumbnailPlugin } from 'svelte-search-engine/plugins';
 ```
 
 Register both plugins on the `Engine` component:
 
 ```svelte
 <script lang="ts">
-  import { jsonInterceptorPlugin, thumbnailPlugin } from 'svelte-search-engine';
+  import { jsonInterceptorPlugin, thumbnailPlugin } from 'svelte-search-engine/plugins';
 </script>
 
 <Engine cx={PUBLIC_CSE_CX} plugins={[jsonInterceptorPlugin, thumbnailPlugin]}>
@@ -414,9 +426,9 @@ Inside your custom results component, read the thumbnails directly off each resu
 
 ```svelte
 <script lang="ts">
-  import type { SearchEngineComponentProps } from 'svelte-search-engine';
+  import type { SearchEngineComponentProps } from 'svelte-search-engine/types';
 
-  let { results }: SearchEngineComponentProps = $props();
+  let { results }: SearchEngineComponentProps<'image'> = $props();
 </script>
 
 {#each results as result}
@@ -433,7 +445,8 @@ If you prefer a more explicit prop type, use the `WithThumbs<T>` wrapper. It wid
 
 ```svelte
 <script lang="ts">
-  import type { SearchEngineComponentProps, WithThumbs } from 'svelte-search-engine';
+  import type { SearchEngineComponentProps } from 'svelte-search-engine/types';
+  import type { WithThumbs } from 'svelte-search-engine/plugins';
 
   let { results }: WithThumbs<SearchEngineComponentProps<'image'>> = $props();
 </script>
@@ -441,13 +454,13 @@ If you prefer a more explicit prop type, use the `WithThumbs<T>` wrapper. It wid
 
 ### Writing a Custom Plugin
 
-A plugin implements `PluginBase<T>` with optional lifecycle hooks. Use the `type` field to restrict a plugin to a specific search type:
+A plugin implements `Plugin<T>` with optional lifecycle hooks. Use the `type` field to restrict a plugin to a specific search type:
 
 ```typescript
-import type { PluginBase, ImagePlugin } from 'svelte-search-engine';
+import type { Plugin, ImagePlugin } from 'svelte-search-engine/plugins';
 
 // Shared plugin: runs for both web and image searches
-class MyPlugin implements PluginBase {
+class MyPlugin implements Plugin {
 	init() {
 		// Runs once after CSE script loads
 	}
@@ -486,7 +499,7 @@ To use the plugin, pass it to the `Engine` component. You can combine it with th
 
 ```svelte
 <script lang="ts">
-  import { jsonInterceptorPlugin, thumbnailPlugin } from 'svelte-search-engine';
+  import { jsonInterceptorPlugin, thumbnailPlugin } from 'svelte-search-engine/plugins';
 </script>
 
 <Engine cx={PUBLIC_CSE_CX} plugins={[jsonInterceptorPlugin, thumbnailPlugin, myPlugin, myImagePlugin]}>
@@ -511,6 +524,19 @@ To use the plugin, pass it to the `Engine` component. You can combine it with th
 
 Plugins are executed in the order they are imported.
 
+## Search Element API
+
+For programmatic control of the search elements, import `searchElementApi` from the `api` subpath:
+
+```typescript
+import { searchElementApi } from 'svelte-search-engine/api';
+
+const api = searchElementApi();
+
+// Execute a query on a named search element
+api.getElement('web')?.execute('query');
+```
+
 ## Exported Types
 
 The library exports the following TypeScript types for building custom components and plugins:
@@ -524,15 +550,13 @@ import type {
 	SearchType,
 	Promotion,
 	BaseResult,
-	WebResultType,
-	ImageResultType,
+	WebResult,
+	ImageResult,
 	Result,
-	ComponentAttributes,
-	PluginBase,
-	WebPlugin,
-	ImagePlugin,
-	WithThumbs
-} from 'svelte-search-engine';
+	ComponentAttributes
+} from 'svelte-search-engine/types';
+
+import type { Plugin, WithThumbs } from 'svelte-search-engine/plugins';
 ```
 
 | Type                         | Description                                                                                   |
@@ -544,13 +568,11 @@ import type {
 | `SearchType`                 | Union type: `'web' \| 'image'`                                                                |
 | `Promotion`                  | Promotion result object type                                                                  |
 | `BaseResult`                 | Fields shared by web and image search results                                                 |
-| `WebResultType`              | Web search result object type                                                                 |
-| `ImageResultType`            | Image search result object type                                                               |
-| `Result`                     | Deprecated. Use `WebResultType` or `ImageResultType` instead.                                 |
+| `WebResult`                  | Web search result object type                                                                 |
+| `ImageResult`                | Image search result object type                                                               |
+| `Result`                     | Deprecated. Use `WebResult` or `ImageResult` instead.                                         |
 | `ComponentAttributes`        | Google CSE component configuration attributes                                                 |
-| `PluginBase`                 | Generic plugin interface for extending the library                                            |
-| `WebPlugin`                  | Plugin interface for web-only plugins                                                         |
-| `ImagePlugin`                | Plugin interface for image-only plugins                                                       |
+| `Plugin`                     | Generic plugin interface for extending the library                                            |
 | `WithThumbs<T>`              | Wraps a props type to widen `results` with the thumbnail fields injected by `thumbnailPlugin` |
 
 ## License

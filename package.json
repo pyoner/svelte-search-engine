@@ -19,6 +19,26 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js"
+		},
+		"./components": {
+			"types": "./dist/components/index.d.ts",
+			"svelte": "./dist/components/index.js"
+		},
+		"./types": {
+			"types": "./dist/types/index.d.ts",
+			"default": "./dist/types/index.js"
+		},
+		"./plugins": {
+			"types": "./dist/plugins/index.d.ts",
+			"default": "./dist/plugins/index.js"
+		},
+		"./stores": {
+			"types": "./dist/stores/index.d.ts",
+			"default": "./dist/stores/index.js"
+		},
+		"./api": {
+			"types": "./dist/api/index.d.ts",
+			"default": "./dist/api/index.js"
 		}
 	},
 	"files": [

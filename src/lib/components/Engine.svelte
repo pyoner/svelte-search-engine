@@ -5,7 +5,7 @@
 	import { createDestroyObserver } from '$lib/internal/destroy';
 	import { createCSECallbacks } from '$lib/internal/callbacks';
 	import { registerPlugins } from '$lib/internal/plugin';
-	import type { PluginBase } from '$lib/internal/plugin';
+	import type { Plugin } from '$lib/internal/plugin';
 
 	import type { Context } from '$lib/internal/types';
 
@@ -21,7 +21,7 @@
 		cx: string;
 		className?: string;
 		style?: string;
-		plugins?: PluginBase[];
+		plugins?: Plugin[];
 		children?: Snippet;
 		loading?: Snippet;
 		error?: Snippet<[unknown]>;

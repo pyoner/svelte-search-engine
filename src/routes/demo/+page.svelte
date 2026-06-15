@@ -2,7 +2,7 @@
 	import SearchResults from '$lib/components/SearchResults.svelte';
 	import Results from '$lib/components/Results.svelte';
 	import DemoResults from './DemoResults.svelte';
-	import { searchElementApi } from '$lib';
+	import { searchElementApi } from '$lib/api';
 
 	let query = '';
 

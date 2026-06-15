@@ -3,7 +3,7 @@ import type { StartingInput } from '$lib/internal/types';
 import type { Gname } from '$lib/types/base';
 import type { SearchType } from '$lib/types/search';
 import type { CseElement } from '$lib/types/google';
-import type { PluginBase } from '../internal/plugin';
+import type { Plugin } from '../internal/plugin';
 
 interface CseCursor {
 	currentPageIndex: number;
@@ -61,7 +61,7 @@ type CseTarget = {
 	[key: CseApiMenthodName]: CseApiMethod | undefined;
 };
 
-class JsonInterceptorPlugin implements PluginBase {
+class JsonInterceptorPlugin implements Plugin {
 	#json = new Map<string, CsePayload>();
 	#key: string | null = null;
 

@@ -1,28 +1,19 @@
-// export types
-export type { ElementObject, ElementMap, CseElement, ComponentAttributes } from './types/google';
-export type {
-	BaseResult,
-	ImageResult as ImageResultType,
-	Result,
-	WebResult as WebResultType,
-	Promotion
-} from './types/search';
-export type {
-	SearchEngineComponentProps,
-	SearchEngineComponent,
-	UIComponents
-} from './types/components';
+/**
+ * @deprecated Use subpath imports instead:
+ * - `svelte-search-engine/components`
+ * - `svelte-search-engine/types`
+ * - `svelte-search-engine/plugins`
+ * - `svelte-search-engine/stores`
+ * - `svelte-search-engine/api`
+ */
 
 // export components
-export { default as Engine } from './components/Engine.svelte';
-export { default as ImageResult } from './components/ImageResult.svelte';
-export { default as Results } from './components/Results.svelte';
-export { default as Search } from './components/Search.svelte';
-export { default as SearchBox } from './components/SearchBox.svelte';
-export { default as SearchResults } from './components/SearchResults.svelte';
-export { default as WebResult } from './components/WebResult.svelte';
+export * from './components';
 
-// export stores
+// export plugin system
+export * from './plugins';
+
+// export stores with legacy suffix naming
 export {
 	init as initStore,
 	ready as readyStore,
@@ -31,10 +22,7 @@ export {
 } from './stores';
 
 // export search element api
-export { searchElementApi } from './internal/api';
+export { searchElementApi } from './api';
 
-// export plugin system
-export type { ImagePlugin, PluginBase, WebPlugin } from './internal/plugin';
-export { jsonInterceptorPlugin } from './plugins/json-interceptor';
-export { thumbnailPlugin } from './plugins/thumbnail';
-export type { WithThumbs } from './plugins/thumbnail';
+// export remaining types that do not clash with component names
+export type { BaseResult, Promotion, Result } from './types';

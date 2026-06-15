@@ -17,26 +17,37 @@ export type Promotion = {
 	visibleUrl: string;
 };
 
-export type Result = {
+export type BaseResult = {
 	content: string;
 	contentNoFormatting: string;
-	contextUrl?: string; // Optional, for image search results only
-	fileFormat: string;
-	image?: Required<Image>; // Optional, for image search results only
-	perResultLabels: Array<{
+	thumbnailImage: Required<Image>;
+	title: string;
+	titleNoFormatting: string;
+	visibleUrl: string;
+};
+
+export type WebResult = BaseResult & {
+	url: string;
+	perResultLabels?: Array<{
 		anchor: string;
 		label: string;
 		labelWithOp: string;
 	}>;
-	richSnippet: Array<Record<string, unknown>>; // For web search results only
-	thumbnailImage: Required<Image>;
-	title: string;
-	titleNoFormatting: string;
-	url: string;
-	visibleUrl: string;
+	richSnippet?: Array<Record<string, unknown>>;
 };
 
-export type SearchCallback = {
+export type ImageResult = BaseResult & {
+	contextUrl: string;
+	fileFormat: string;
+	image: Required<Image>;
+};
+
+/**
+ * @deprecated Use WebResult or ImageResult instead.
+ */
+export type Result = WebResult | ImageResult;
+
+export type SearchCallback<T extends SearchType = SearchType> = {
 	/**
 	 * Image/Web Search-Starting Callback
 	 *
@@ -69,7 +80,7 @@ export type SearchCallback = {
 		gname: Gname,
 		query: string,
 		promos: Promotion[] | undefined,
-		results: Result[],
+		results: T extends 'web' ? WebResult[] : ImageResult[],
 		div: HTMLElement
 	) => void | true;
 	/**
@@ -118,7 +129,7 @@ export type Config = {
 	parsetags?: 'explicit' | 'onload';
 	initializationCallback?: () => void;
 	searchCallbacks?: {
-		image?: SearchCallback;
-		web?: SearchCallback;
+		image?: SearchCallback<'image'>;
+		web?: SearchCallback<'web'>;
 	};
 };

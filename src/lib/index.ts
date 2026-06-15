@@ -1,6 +1,6 @@
 // export types
 export type { ElementObject, ElementMap, CseElement, ComponentAttributes } from './types/google';
-export type { Result, Promotion } from './types/search';
+export type { BaseResult, Result, Promotion } from './types/search';
 export type {
 	SearchEngineComponentProps,
 	SearchEngineComponent,
@@ -9,9 +9,12 @@ export type {
 
 // export components
 export { default as Engine } from './components/Engine.svelte';
+export { default as ImageResult } from './components/ImageResult.svelte';
+export { default as Results } from './components/Results.svelte';
 export { default as Search } from './components/Search.svelte';
 export { default as SearchBox } from './components/SearchBox.svelte';
 export { default as SearchResults } from './components/SearchResults.svelte';
+export { default as WebResult } from './components/WebResult.svelte';
 
 // export stores
 export {

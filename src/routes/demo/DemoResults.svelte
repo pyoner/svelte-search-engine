@@ -2,13 +2,13 @@
 	import type { SearchEngineComponentProps } from '$lib/types/components';
 	import type { WithThumbs } from '$lib/plugins/thumbnail';
 
-	let { results }: WithThumbs<SearchEngineComponentProps> = $props();
+	let { results }: WithThumbs<SearchEngineComponentProps<'image'>> = $props();
 </script>
 
 <ul class="results">
 	{#each results as result}
 		<li>
-			<a href={result.url} target="_blank" rel="noopener">
+			<a href={result.contextUrl} target="_blank" rel="noopener">
 				{result.visibleUrl}
 			</a>
 			<p>{@html result.title}</p>

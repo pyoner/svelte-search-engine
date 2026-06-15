@@ -1,7 +1,7 @@
 import type { Gname } from '$lib/types/base';
 import type { UIComponents } from '$lib/types/components';
 import type { ComponentConfig, OptComponentConfig } from '$lib/types/google';
-import type { Promotion, Result, SearchType } from '$lib/types/search';
+import type { ImageResult, Promotion, SearchType, WebResult } from '$lib/types/search';
 
 export type WithGname = { gname: Gname };
 export type WithTag<T extends ComponentConfig['tag']> = { tag: T };
@@ -24,12 +24,12 @@ export type StartingInput = {
 	query: string;
 };
 
-export type ReadyInput = {
-	type: SearchType;
+export type ReadyInput<T extends SearchType = SearchType> = {
+	type: T;
 	gname: Gname;
 	query: string;
 	promos: Promotion[] | undefined;
-	results: Result[];
+	results: T extends 'web' ? WebResult[] : ImageResult[];
 	div: HTMLElement;
 };
 

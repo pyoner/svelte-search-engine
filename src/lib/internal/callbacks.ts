@@ -12,7 +12,7 @@ import {
 } from './plugin';
 import { init, starting, ready, rendered } from './store';
 
-export function createCallbacks(type: SearchType): SearchCallback {
+export function createCallbacks<T extends SearchType>(type: T): SearchCallback<T> {
 	return {
 		starting(gname, query) {
 			const input = { type, gname, query };
@@ -39,8 +39,8 @@ export function createCallbacks(type: SearchType): SearchCallback {
 export function createCSECallbacks(onInit: () => void): {
 	initializationCallback: () => void;
 	searchCallbacks: {
-		image: SearchCallback;
-		web: SearchCallback;
+		image: SearchCallback<'image'>;
+		web: SearchCallback<'web'>;
 	};
 	destroy: () => void;
 } {

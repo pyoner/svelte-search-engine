@@ -1,11 +1,11 @@
 import type { PluginBase } from '../internal/plugin';
 import { getJson, type CseResult } from './json-interceptor';
-import type { Image, Result } from '../types/search';
+import type { BaseResult, Image } from '../types/search';
 import type { ReadyInput } from '../internal/types';
 
-export type WithThumbs<T> = T & {
+export type WithThumbs<T extends { results: Array<BaseResult> }> = Omit<T, 'results'> & {
 	results: Array<
-		Result & {
+		T['results'][number] & {
 			thumbnailLarge?: Image;
 			thumbnailMedium?: Image;
 		}
@@ -34,7 +34,7 @@ function cseResultToImage(r: CseResult, prefix: TbPrefix): Image | undefined {
 	return image;
 }
 
-function extractImageId(result: Result): string | undefined {
+function extractImageId(result: BaseResult): string | undefined {
 	const url = result.thumbnailImage?.url;
 	if (!url) return undefined;
 	const match = url.match(/[?&]q=tbn:([^&]+)/);

@@ -1,6 +1,12 @@
 // export types
 export type { ElementObject, ElementMap, CseElement, ComponentAttributes } from './types/google';
-export type { BaseResult, Result, Promotion } from './types/search';
+export type {
+	BaseResult,
+	ImageResult as ImageResultType,
+	Result,
+	WebResult as WebResultType,
+	Promotion
+} from './types/search';
 export type {
 	SearchEngineComponentProps,
 	SearchEngineComponent,

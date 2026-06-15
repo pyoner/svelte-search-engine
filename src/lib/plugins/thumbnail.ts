@@ -1,4 +1,4 @@
-import type { PluginBase } from '../internal/plugin';
+import type { ImagePlugin } from '../internal/plugin';
 import { getJson, type CseResult } from './json-interceptor';
 import type { BaseResult, Image } from '../types/search';
 import type { ReadyInput } from '../internal/types';
@@ -41,10 +41,10 @@ function extractImageId(result: BaseResult): string | undefined {
 	return match?.[1];
 }
 
-class ThumbnailPlugin implements PluginBase {
-	beforeReady(input: WithThumbs<ReadyInput>) {
-		if (input.type !== 'image') return;
+class ThumbnailPlugin implements ImagePlugin {
+	type = 'image' as const;
 
+	beforeReady(input: WithThumbs<ReadyInput<'image'>>) {
 		const json = getJson(input.gname, input.type);
 		if (!json?.results) return;
 
